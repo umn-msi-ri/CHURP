@@ -6,8 +6,8 @@
 # Sample Sheet: SampleNM, R1, R2, Trim (yes or no), TrimmomaticOption, Hisat2Index, Hisat2Option, GTF/GFF
 IN=`head -n $((${PBS_ARRAYID}+1)) ${SampleSheet} | tail -1`
 # handle empty line and comment line
-[ -z "${IN// }" ] && echo "hit an empty line in sample sheet" && exit $?
-[ "$IN" = "\#.*" ] && echo "hit a comment line in sample sheet" && exit $?
+[ -z "${IN// }" ] && echo "hit an empty line in sample sheet" && exit 22
+[ "$IN" = "\#.*" ] && echo "hit a comment line in sample sheet" && exit 22
 while IFS="|" read -ra OPTS; do 
     SAMPLENM=${OPTS[0]}
     R1FILE=${OPTS[1]}    
@@ -35,7 +35,7 @@ if [ $PURGE = "true" ]; then
 fi
 
 # start workflow with check point
-[ -f ${SAMPLENM}.done ] && echo "found done analysis, exit" && exit $?
+[ -f ${SAMPLENM}.done ] && echo "found done analysis, exit" && exit 17
 
 # Set Up a log file instead (?)
 if [ ! -f fastqc.done]; then
