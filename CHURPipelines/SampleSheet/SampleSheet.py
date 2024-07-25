@@ -72,11 +72,13 @@ class Samplesheet(object):
             r'(_S[0-9]+)?'
             r'(_[ATCG]{4,})?'
             r'(_L00[1-8])?'
-            r'(_R(1|2))?_001\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
+            r'(_R(1|2))?'
+            r'(_001)?'
+            r'\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
         # Get all files that look like not-R2 fastq files, make the matching
         # case-insensitive.
         fq_re = re.compile(
-            r'^.+[^_R2]_001\.((fq(\.gz)?$)|(fastq(\.gz)?$))',
+            r'^.+_R1(_001)?\.((fq(\.gz)?$)|(fastq(\.gz)?$))',
             flags=re.I)
         cont = os.listdir(d)
         # From the Illumina BaseSpace online documentation, this is what the

@@ -212,7 +212,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
         except OSError:
             DieGracefully.die_gracefully(DieGracefully.BAD_FASTQ)
         # Check if there is at least one file ending in a standard fastq suffix
-        fq_pat = re.compile(r'^.+((.fq(.gz)?$)|(.fastq(.gz)?$))')
+        fq_pat = re.compile(r'^.+((\.fq(\.gz)?)|(\.fastq(\.gz)?))$')
         has_fastq = False
         for f in contents:
             if re.match(fq_pat, f):
@@ -336,19 +336,21 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
         return os.path.realpath(expr_group_path)
 
     def _get_sample_names(self, fq_dir):
-        # Four different regexs to determine if its a fastq then grab the 
+        # Four different regexs to determine if its a fastq then grab the
         # sample name, for fastqs from UMGC vs. SRA
         samp_re = re.compile(
             r'(_S[0-9]+)?'
             r'(_[ATCG]{4,})?'
             r'(_L00[1-8])?'
-            r'(_R(1|2))?_001\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
+            r'(_R(1|2))?'
+            r'(_001)?'
+            r'\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
         # RE to get forwards reads fq files
         fq_re = re.compile(
-            r'^.+[^_R2]_001\.((fq(\.gz)?$)|(fastq(\.gz)?$))',
+            r'^.+_R1(_001)?\.((fq(\.gz)?$)|(fastq(\.gz)?$))',
             flags=re.I)
-        sra_re = re.compile(r'^.+_1\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
-        sra_samp_re = re.compile(r'_(1|2)\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
+        sra_re = re.compile(r'^.+_1\.((fq(\.gz)?)|(fastq(\.gz)?))$')
+        sra_samp_re = re.compile(r'_(1|2)\.((fq(\.gz)?)|(fastq(\.gz)?))$')
         # iterate through contents of the fastq dir and grab the sample names
         fq_dir_contents = os.listdir(fq_dir)
         sample_names = []
