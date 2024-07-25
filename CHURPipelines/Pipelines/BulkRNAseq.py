@@ -285,7 +285,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
         groups = args['expr_groups']
         # throw an error if the expr_groups file is not an excel file 
         if not groups[-4:] == "xlsx" and not groups[-3:] == "xls":
-            self.sheet_logger.error(
+            self.pipe_logger.error(
                 'A filetype different than an excel spreadsheet was '
                 'supplied for --expr_groups. You supplied a filetype '
                 f'end in {groups[-4:]}. Please replace this with an excel '
@@ -298,17 +298,17 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
                                      keep_default_na = False)
         # throw an error if SampleName is not a header in the group sheet
         if not 'SampleName' in groups_sheet:
-            self.sheet_logger.error(
+            self.pipe_logger.error(
                 'The xlsx experimental groups first sheet must have a '
                 'column named "SampleName"')
             DieGracefully.die_gracefully(DieGracefully.BRNASEQ_NO_SAMP_GPS)   
         # throw an error if Group is not a header in the group sheet
         if not 'Group' in groups_sheet:
-            self.sheet_logger.error(
+            self.pipe_logger.error(
                 'The xlsx experimental groups first sheet must have a '
                 'column named "Group"')
             DieGracefully.die_gracefully(DieGracefully.BRNASEQ_NO_SAMP_GPS)
-        return(args)
+        return args
 
     def _create_stub_groupsheet(self, args):
         ## This produces an experimental groups xlsx with SampleNames
@@ -333,7 +333,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
             groups.to_excel(writer, sheet_name='groups', index = False)
             contrasts.to_excel(writer, sheet_name='contrasts', index = False)
         # return the new path to add back to args
-        return(os.path.realpath(expr_group_path))
+        return os.path.realpath(expr_group_path)
 
     def _get_sample_names(self, fq_dir):
         # Four different regexs to determine if its a fastq then grab the 
@@ -362,7 +362,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
             elif re.match(sra_re, current_file):
                 sn = re.sub(sra_samp_re, '', current_file)
                 sample_names.append(sn)
-        return(sample_names)
+        return sample_names
 
 
     def qsub(self):
