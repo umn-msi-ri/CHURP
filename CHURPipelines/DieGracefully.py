@@ -201,18 +201,24 @@ def empty_fastq():
 ERROR
 
 The FASTQ directory that you have supplied does not contain any valid FASTQ
-or gzipped FASTQ files. Please ensure that the files  have names that conform
-to either the standard Illumina filename or the SRA file name format and end in
-one of the following: .fastq, .fastq.gz, .fq., .fq.gz (case sensitive).
+or gzipped FASTQ files. Please ensure that the files have names that conform
+to one of the following formats.
 
-Example valid filenames:
-Sample01_S01_R1_001.fastq.gz
-Sample01_S01_R2_001.fastq.gz
+Standard AVITI:
+Sample01_R1.fastq.gz
+Sample01_R2.fastq.gz
 
-or
+Legacy AVITI (UMGC, no lane identifier):
+Sample01_S1_R1_001.fastq.gz
+Sample01_S1_R2_001.fastq.gz
 
-SRR7989635_1.fastq.gz
-SRR7989635_2.fastq.gz\n"""
+Illumina (UMGC, no lane identifier):
+Sample01_S1_R1_001.fastq.gz
+Sample01_S1_R2_001.fastq.gz
+
+SRA:
+SRR12345678_1.fastq.gz
+SRR12345678_2.fastq.gz\n"""
     sys.stderr.write(msg)
     return
 
