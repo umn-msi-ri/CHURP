@@ -37,7 +37,7 @@ NEFARIOUS_CHAR = 99
 # developed by RIS and funded by UMII
 CREDITS = """----------
 Thank you for using CHURP. This software was developed by the Research
-Informatics Solutions (RIS) group at MSI with funding from the University of
+Informatics (RI) group at MSI with funding from the University of
 Minnesota Informatics Institute (UMII). For help, please contact
 help@msi.umn.edu.
 
@@ -102,7 +102,7 @@ with this error and the debugging output.\n"""
 
 
 def bad_resources():
-    """Call this function when the user supplies illegal PBS resources."""
+    """Call this function when the user supplies illegal SLURM resources."""
     msg = CREDITS + """----------
 ERROR
 
@@ -202,8 +202,8 @@ ERROR
 
 The FASTQ directory that you have supplied does not contain any valid FASTQ
 or gzipped FASTQ files. Please ensure that the files  have names that conform
-to either the standard Illumina filename or the SRA file name format and end in
-one of the following: .fastq, .fastq.gz, .fq., .fq.gz (case sensitive).
+to the standard file name format and end in one of the following: .fastq, 
+.fastq.gz, .fq., .fq.gz (case sensitive).
 
 Example valid filenames:
 Sample01_S01_R1_001.fastq.gz
