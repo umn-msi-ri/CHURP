@@ -8,8 +8,8 @@ supported:
     - bulk_rnaseq
     - genome_aliases
 Questions should be directed to help@msi.umn.edu.
-Version: 0.3.0-dev
-2023-08-17
+Version: 1.0.1
+2024-23-07
 """
 
 # Check the Python version
