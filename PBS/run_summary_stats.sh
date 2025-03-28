@@ -154,6 +154,7 @@ echo "# ${SLURM_JOB_ID} $(date '+%F %T'): Using counting reads with featureCount
 mkdir -p "${WORKDIR}/allsamples" && cd "${WORKDIR}/allsamples"
 
 # Use featureCounts to make a merged counts matrix
+# By default summarization is performed at gene level (not exon)
 echo "# $(date '+%F %T'): Finished section ${LOG_SECTION}" >> /dev/stderr
 LOG_SECTION="featureCounts"
 echo "# $(date '+%F %T'): Entering section ${LOG_SECTION}" >> /dev/stderr
@@ -165,8 +166,8 @@ then
     featureCounts \
         -a "${GTFFILE}" \
         -T ${SLURM_CPUS_PER_TASK} \
-        -B \
-        -p \
+        -B \ # only fragments that have both ends successfully aligned will be considered for summarization
+        -p \ #paired-end reads
         --countReadPairs \
         -Q 10 \
         -s "${STRAND}" \
