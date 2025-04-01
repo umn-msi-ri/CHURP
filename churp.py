@@ -40,7 +40,11 @@ def org_aliases(args):
     databases that can be used as targets for various pipelines."""
     from CHURPipelines import FavoriteSpecies
     # Print a nice message to describe the table we are showing
-    msg = """Genome Aliases
+    msg = """
+    
+    ==============
+    Genome Aliases
+    ==============
 
 The species listed in the table below are common genomics models for which we
 have provided convenient shortcuts in CHURP. Use the value in the "Alias" column
