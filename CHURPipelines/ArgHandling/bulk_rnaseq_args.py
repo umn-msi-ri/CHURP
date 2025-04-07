@@ -237,7 +237,7 @@ def add_args(ap):
               'Note that this is called "queue" for historical reasons - the '
               'equivalent term for Slurm is "partition."'),
         type=str,
-        default='msimall')
+        default='msismall')
     ap_sched.add_argument(
         '--group',
         '-A',
