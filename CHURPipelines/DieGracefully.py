@@ -120,21 +120,20 @@ def brnaseq_success(pipe_script, samplesheet, qsubkey):
     msg = CREDITS + """----------
 SUCCESS
 
-Samplesheet and pipeline script generation complete! Their paths are given
-below:
+Samplesheet and pipeline script generation complete! Their paths are given below:
 
 Pipeline script: {pn}
 Samplesheet: {ss}
 Sbatch array key: {kn}
 
-Verify the information in the samplesheet, and run the pipeline script typing 
+Verify the information in the samplesheet, and run the pipeline script by typing 
 
 bash {pn}
 
-while logged into Agate. You will recieve email notifications of job
-start/completion/error at your UMN X500 email address. If you need to submit
-an error report, please contact help@msi.umn.edu. Please include the
-samplesheet, pipeline script, and the error message with your report.\n\n"""
+You will recieve email notifications of job start/completion/error at your UMN 
+X500 email address. If you need to submit an error report, please contact 
+help@msi.umn.edu. Please include the samplesheet, pipeline script, and the error 
+message with your report.\n\n"""
     sys.stderr.write(msg.format(pn=pipe_script, ss=samplesheet, kn=qsubkey))
     return
 
@@ -404,7 +403,7 @@ You specified a queue that is not in the list of allowed queues. Please choose
 one of the following:
 
 {q}\n"""
-    sys.stderr.write(msg.format(q='\n'.join(CHURPipelines.QUEUES).'\n'))
+    sys.stderr.write(msg.format(q='\n'.join(CHURPipelines.QUEUES)))
     return
 
 
@@ -441,7 +440,7 @@ ERROR
 
 The organism you supplied is not supported by the organism alias option. To see
 the list of available organism aliases, run the "show_genome_aliases"
-subcommand of CHURP. The names are *case sensitive.*\n\n"""
+subcommand of CHURP. The names are case sensitive.\n\n"""
     sys.stderr.write(msg)
     return
 
