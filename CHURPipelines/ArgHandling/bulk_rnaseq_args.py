@@ -233,11 +233,11 @@ def add_args(ap):
         '-q',
         metavar='<Queue>',
         dest='msi_queue',
-        help=('Job queue to send the scheduler requests. Defaults to "small". '
+        help=('Job queue to send the scheduler requests. Default "agsmall". '
               'Note that this is called "queue" for historical reasons - the '
               'equivalent term for Slurm is "partition."'),
         type=str,
-        default='small')
+        default='agsmall')
     ap_sched.add_argument(
         '--group',
         '-A',
@@ -251,18 +251,18 @@ def add_args(ap):
         '-p',
         metavar='<procs per node>',
         dest='ppn',
-        help='Processors to allocate for each job. Defaults to 6.',
+        help='Processors to allocate for each job. Defaults to 8.',
         type=int,
-        default=6)
+        default=8)
     ap_sched.add_argument(
         '--mem',
         '-m',
         metavar='<mem per job (MB)>',
         dest='mem',
         help=('Memory, in megabytes, to allocate to each job. Must be at '
-              'least 12000 (12GB). Default: 12000'),
+              'least 24000 (24GB). Default: 24000'),
         type=int,
-        default=12000)
+        default=24000)
     ap_sched.add_argument(
         '--tmp',
         metavar='<job temp space (MB)>',
