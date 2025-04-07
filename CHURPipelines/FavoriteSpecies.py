@@ -63,14 +63,9 @@ for sp in FAVE_ASM:
         f'{CHURPipelines.BIOREF_BASE}/{div}/{spn}-{rel}/{ver}/hisat2/genome')
     sp_d['seq'] = (
         f'{CHURPipelines.BIOREF_BASE}/{div}/{spn}-{rel}/{ver}/seq/genome.fa')
-    # For human, there is no patch-level code on the GTF for some reason.
+    # For human, the files don't use the full assembly name, but a truncated version:
     if sp == 'human':
         ver_trunc = ver.split('.')[0]
-    elif sp == 'fly':
-        # This is a SUPER SHORT TERM fix -- for some reason the D. melanogaster
-        # genome ans GTF versions do not match.
-        # 2024-04-30
-        ver_trunc = 'BDGP6.32'
     else:
         ver_trunc = ver
     sp_d['gtf'] = (
