@@ -7,11 +7,11 @@ import CHURPipelines
 # The latest Ensembl releases pulled into bioref. Update this when bioref
 # updtaes!
 ENSEMBL_RELEASES = {
-    'main': '110',
-    'plants': '58',
-    'fungi': '58',
-    'metazoa': '57',
-    'protists': '58'}
+    'main': '113',
+    'plants': '60',
+    #'fungi': '58', no orgs added from here yet
+    #'metazoa': '57',
+    'protists': '60'}
 
 # This is potentially a bit silly, but it hopefully makes maintaining this
 # easier. Store the ensembl division, species name (as encoded in the directory
@@ -26,7 +26,7 @@ FAVE_ASM = {
     'fly': ('main', 'Drosophila_melanogaster', 'BDGP6.46'),
     'worm': ('main', 'Caenorhabditis_elegans', 'WBcel235'),
     'yeast': ('main', 'Saccharomyces_cerevisiae', 'R64-1-1'),
-    'cow': ('main', 'Bos_taurus', 'ARS-UCD1.2'),
+    'cow': ('main', 'Bos_taurus', 'ARS-UCD1.3'),
     'dog': ('main', 'Canis_lupus_familiaris', 'ROS_Cfam_1.0'),
     'pig': ('main', 'Sus_scrofa', 'Sscrofa11.1'),
     'chicken': ('main', 'Gallus_gallus', 'bGalGal1.mat.broiler.GRCg7b'),
