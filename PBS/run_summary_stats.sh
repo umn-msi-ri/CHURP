@@ -154,7 +154,6 @@ echo "# ${SLURM_JOB_ID} $(date '+%F %T'): Using counting reads with featureCount
 mkdir -p "${WORKDIR}/allsamples" && cd "${WORKDIR}/allsamples"
 
 # Use featureCounts to make a merged counts matrix
-# By default summarization is performed at gene level (not exon)
 echo "# $(date '+%F %T'): Finished section ${LOG_SECTION}" >> /dev/stderr
 LOG_SECTION="featureCounts"
 echo "# $(date '+%F %T'): Entering section ${LOG_SECTION}" >> /dev/stderr
