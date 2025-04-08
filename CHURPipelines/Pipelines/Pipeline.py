@@ -81,10 +81,9 @@ class Pipeline(object):
         return
 
     def _check_scheduler(self):
-        """Check that the scheduler resource requests make sense. ppn should be
-        between 1 and 24; mem should be between 2000 and 60000; walltime should
-        be between 2h and 96h; and the queues should be one of the valid queues
-        on Mesabi or Mangi."""
+        """Check that the scheduler resource requests make sense. Check msi partitions 
+        webpage (https://msi.umn.edu/our-resources/slurm-scheduler/slurm-partitions) 
+        for current limits."""
         try:
             assert self.ppn >= 1 and self.ppn <= 128
         except AssertionError as e:
@@ -93,10 +92,10 @@ class Pipeline(object):
                 self.ppn)
             DieGracefully.die_gracefully(DieGracefully.BAD_RESOURCES)
         try:
-            assert self.mem >= 1 and self.mem <= 512000
+            assert self.mem >= 1 and self.mem <= 750000
         except AssertionError as e:
             self.logger.error(
-                'Mem value of %i is invalid! Specify between 1 and 512000.',
+                'Mem value of %i is invalid! Specify between 1 and 750000.',
                 self.mem)
             DieGracefully.die_gracefully(DieGracefully.BAD_RESOURCES)
         try:

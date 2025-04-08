@@ -34,10 +34,10 @@ BAD_ORG = 31
 NEFARIOUS_CHAR = 99
 
 # We will prepend a little message to the end that says the pipelines were
-# developed by RIS and funded by UMII
+# developed by RI and funded by UMII
 CREDITS = """----------
 Thank you for using CHURP. This software was developed by the Research
-Informatics Solutions (RIS) group at MSI with funding from the University of
+Informatics (RI) group at MSI with funding from the University of
 Minnesota Informatics Institute (UMII). For help, please contact
 help@msi.umn.edu.
 
@@ -57,7 +57,7 @@ ERROR
 
 CHURP has caught an unidentified error. Please send this error message, the
 command you typed, and debugging output to the MSI help desk
-(ribhelp@msi.umn.edu).\n"""
+(ribhelp@msi.umn.edu).\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -70,7 +70,7 @@ ERROR
 
 The command log location you have supplied is not suitable. Either you do not
 have permissions to write to the location specified, or the disk is full.
-Please choose another location and try again.\n"""
+Please choose another location and try again.\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -83,7 +83,7 @@ ERROR
 The output directory you have supplied is not suitable. Either you do not have
 permissions to write into it, or the disk is full. If you have verified that you
 can write into the directory, please contact the help desk (help@msi.umn.edu)
-with this error and the debugging output.\n"""
+with this error and the debugging output.\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -96,21 +96,19 @@ ERROR
 The working directory you have supplied is not suitable. Either you do not have
 permissions to write into it, or the disk is full. If you have verified that you
 can write into the direcotry, please contact the help desk (help@msi.umn.edu)
-with this error and the debugging output.\n"""
+with this error and the debugging output.\n\n"""
     sys.stderr.write(msg)
     return
 
 
 def bad_resources():
-    """Call this function when the user supplies illegal PBS resources."""
+    """Call this function when the user supplies illegal SLURM resources."""
     msg = CREDITS + """----------
 ERROR
 
-The resouces you have specified are out of allowable bounds for our system. The
-number of processors per node (PPN) should be an integer between 1 and 24. The
-allocated memory should be specified in megabytes (MB) as an integer between 1
-and 62000. The walltime should be specified in hours as an integer between 1 and
-96.\n"""
+The resouces you have specified are out of allowable bounds for our system. Please 
+check the number of processors per node (-p), time (-w) and memory (-m) requested. 
+Allowable limits can be fount at https://msi.umn.edu/our-resources/slurm-scheduler/slurm-partitions.\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -122,18 +120,20 @@ def brnaseq_success(pipe_script, samplesheet, qsubkey):
     msg = CREDITS + """----------
 SUCCESS
 
-Samplesheet and pipeline script generation complete! Their paths are given
-below:
+Samplesheet and pipeline script generation complete! Their paths are given below:
 
 Pipeline script: {pn}
 Samplesheet: {ss}
 Sbatch array key: {kn}
 
-Verify the information in the samplesheet, and run the pipeline script with
-bash while logged into Mesabi. You will recieve email notifications of job
-start/completion/error at your UMN X500 email address. If you need to submit
-an error report, please contact help[at]msi.umn.edu. Please include the
-samplesheet, pipeline script, and the error message with your report.\n"""
+Verify the information in the samplesheet, and run the pipeline script by typing 
+
+bash {pn}
+
+You will recieve email notifications of job start/completion/error at your UMN 
+X500 email address. If you need to submit an error report, please contact 
+help@msi.umn.edu. Please include the samplesheet, pipeline script, and the error 
+message with your report.\n\n"""
     sys.stderr.write(msg.format(pn=pipe_script, ss=samplesheet, kn=qsubkey))
     return
 
@@ -149,7 +149,7 @@ You did not specify sufficient options to run the bulk_rnaseq subcommand of
 CHURP. You must specify a FASTQ directory (-f). Additionally, you must either
 specify a path to a HISAT2 index (-x) and GTF (-g), or an organism name (-r).
 If you are building a group template file, you need only specify a FASTQ
-directory. Please fix your command line and re-run.\n"""
+directory. Please fix your command line and re-run.\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -164,7 +164,7 @@ ERROR
 You have specified conflicting options to the bulk_rnaseq subcommand. HISAT2
 index (-x) and GTF (-g) are both incompatible with organism (-r). Pass the help
 option (-h) to see all available options. Please fix your command line and
-re-run.\n"""
+re-run.\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -177,7 +177,7 @@ ERROR
 The HISAT2 index that you have supplied is not valid. Please give the path to
 the base of the HISAT2 index (without the .*.ht2 extension). It should be given
 in the same way as would be given to HISTA2 directly. See the HISAT2 manual for
-information on building an index from a FASTA file.\n"""
+information on building an index from a FASTA file.\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -190,7 +190,7 @@ ERROR
 The FASTQ directory that you have supplied either does not exist or cannot be
 read. If you have verified that you can read the directory contents, please
 contact the help desk (help@msi.umn.edu) with this error message and the
-debugging output.\n"""
+debugging output.\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -202,8 +202,8 @@ ERROR
 
 The FASTQ directory that you have supplied does not contain any valid FASTQ
 or gzipped FASTQ files. Please ensure that the files  have names that conform
-to either the standard Illumina filename or the SRA file name format and end in
-one of the following: .fastq, .fastq.gz, .fq., .fq.gz (case sensitive).
+to the standard file name format and end in one of the following: .fastq, 
+.fastq.gz, .fq., .fq.gz (case sensitive).
 
 Example valid filenames:
 Sample01_S01_R1_001.fastq.gz
@@ -212,7 +212,7 @@ Sample01_S01_R2_001.fastq.gz
 or
 
 SRR7989635_1.fastq.gz
-SRR7989635_2.fastq.gz\n"""
+SRR7989635_2.fastq.gz\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -223,22 +223,22 @@ def bad_gtf():
     msg = CREDITS + """----------
 ERROR
 
-The GTF you have supplied does not exist, or cannot be read. Please check your
+The GTF you have supplied does not exist or cannot be read. Please check your
 path for any typos and that any special characters are properly quoted or
-escaped and try again.\n"""
+escaped and try again.\n\n"""
     sys.stderr.write(msg)
     return
 
 
 def bad_adapter():
-    """Call thsi function when the user supplies an adapters file that does not
+    """Call this function when the user supplies an adapters file that does not
     exist or cannot be read."""
     msg = CREDITS + """----------
 ERROR
 
 The adapters file that you have supplied either does not exist or cannot be
 read. Please check your path for any typos and that any special characters are
-properly quoted or escaped, and try again.\n"""
+properly quoted or escaped, and try again.\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -249,9 +249,9 @@ def brnaseq_bad_groups():
     msg = CREDITS + """----------
 ERROR
 
-The groups template CSV file that you have provided does not exist, or cannot
+The groups template CSV file that you have provided does not exist or cannot
 be read. Please check your path for any typos and that any spaces or special
-characters are properly quoted or escaped.\n"""
+characters are properly quoted or escaped.\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -267,7 +267,7 @@ the samples that were found in the FASTQ directory. Check that you supplied the
 correct directory with -f, and that your sample names match exactly between the
 CSV and the FASTQ directory. Use the template from the "group_template"
 subcommand to see the exact sample names that CHURP is using to match samples
-to groups.\n"""
+to groups.\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -286,7 +286,7 @@ Takes a pipeline as an argument, followed by modifiers to control the output.
 See the pipeline-specific help (-h) or the user manual for details.
 
 Currently available pipelines:
-    - bulk_rnaseq\n"""
+    - bulk_rnaseq\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -298,7 +298,7 @@ def group_bad_col():
 ERROR
 
 You have specified an invalid column name. Column names cannot contain commas,
-because the experimental group file is a comma-separated values file.\n"""
+because the experimental group file is a comma-separated values file.\n\n"""
     sys.stderr.write(msg)
     return
 
@@ -318,7 +318,7 @@ dataset. Samples with the same "Group" label will be treated as replicates
 in the analysis. Samples with a "Group" value of NULL will not be used in
 downstream differential expression analysis. When you have edited the file to
 your liking, supply its path to the "bulk_rnaseq" pipeline with the -e
-option to enable group testing.\n"""
+option to enable group testing.\n\n"""
     sys.stderr.write(msg.format(path=fname))
     return
 
@@ -337,7 +337,7 @@ Samplesheet: {ss}
 Sbatch array key: {kn}
 
 Below is the output from sbatch.
-Sbatch stdout:\n"""
+Sbatch stdout:\n\n"""
     msg += qsub_msg[0].decode('utf-8')
     msg += '\nSbatch stderr:\n'
     msg += qsub_msg[1].decode('utf-8') + '\n'
@@ -361,9 +361,9 @@ Auto-submission of your pipeline jobs failed! There may be an error with the
 scheduler. Check the MSI status page to be sure that the queues are online. If
 the problem persists, please contact the MSI help desk at help@msi.umn.edu.
 
-The output from sbatch is shown below:\n"""
+The output from sbatch is shown below:\n\n"""
     msg += qsub_msg[1].decode('utf-8')
-    msg += '\n'
+    msg += '\n\n'
     sys.stderr.write(msg)
     return
 
@@ -377,7 +377,7 @@ ERROR
 You provided a file or an option that has illegal characters in it. These
 characters can either be used to execute processes maliciously, or will break
 the formatting of CHURP internal files. Please rename your files with
-appropriate characters. The offending string found is: '{badstr}'\n"""
+appropriate characters. The offending string found is: '{badstr}'\n\n"""
     sys.stderr.write(msg.format(badstr=c))
     return
 
@@ -388,7 +388,7 @@ def bad_number(op):
     msg = CREDITS + """----------
 ERROR
 
-You specified an invalid value for the {opt} option.\n"""
+You specified an invalid value for the {opt} option.\n\n"""
     sys.stderr.write(msg.format(opt=op))
     return
 
@@ -424,7 +424,7 @@ The single-read samples are:
 {singles}
 
 The paired-end sample are:
-{paired}\n"""
+{paired}\n\n"""
     sys.stderr.write(
         msg.format(
             singles='\n'.join(se),
@@ -440,7 +440,7 @@ ERROR
 
 The organism you supplied is not supported by the organism alias option. To see
 the list of available organism aliases, run the "show_genome_aliases"
-subcommand of CHURP. The names are *case sensitive.*\n"""
+subcommand of CHURP. The names are case sensitive.\n\n"""
     sys.stderr.write(msg)
     return
 

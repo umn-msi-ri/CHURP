@@ -8,8 +8,8 @@ supported:
     - bulk_rnaseq
     - genome_aliases
 Questions should be directed to help@msi.umn.edu.
-Version: 0.3.0-dev
-2023-08-17
+Version: 1.0.1
+2024-23-07
 """
 
 # Check the Python version
@@ -40,7 +40,11 @@ def org_aliases(args):
     databases that can be used as targets for various pipelines."""
     from CHURPipelines import FavoriteSpecies
     # Print a nice message to describe the table we are showing
-    msg = """Genome Aliases
+    msg = """
+    
+    ==============
+    Genome Aliases
+    ==============
 
 The species listed in the table below are common genomics models for which we
 have provided convenient shortcuts in CHURP. Use the value in the "Alias" column
@@ -49,7 +53,7 @@ CHURP pipelines. These names are *case sensitive.* To read more about MSI's
 collection of genomics reference data, including the update schedule, please
 see the following page:
 
-https://www.msi.umn.edu/content/bioref\n\n"""
+https://msi.umn.edu/our-resources/knowledge-base/bioinformatics-guides/bioref\n\n"""
     sys.stderr.write(msg)
     # Print a header for the table
     hdr = [

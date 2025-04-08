@@ -3,8 +3,8 @@
 run analysis on the Minnesota Supercomputing Institute (MSI) cluster."""
 
 # set dunder (double-underscore) variables
-__version__ = '1.0.1'
-__date__ = '2024-07-23'
+__version__ = '1.0.2'
+__date__ = '2025-04-11'
 
 import datetime
 import getpass
@@ -18,8 +18,8 @@ HUM_TIMESTAMP = '{t.hour:02}:{t.minute:02}:{t.second:02}'.format(t=curr_time)
 NOW = curr_time.isoformat(sep=' ', timespec='seconds')
 UNAME = getpass.getuser()
 
-# Define the allowable queues
-QUEUES = ['amdsmall', 'amd512', 'agsmall']
+# Define the allowable queues with different mem limits, both with -N 1 because we work in a single node mode
+QUEUES = ['msismall', 'msibigmem']
 
 # Define a base path to bioref genome resources
 BIOREF_BASE = '/common/bioref/ensembl'
