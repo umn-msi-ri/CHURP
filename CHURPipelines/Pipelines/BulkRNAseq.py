@@ -212,7 +212,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
         except OSError:
             DieGracefully.die_gracefully(DieGracefully.BAD_FASTQ)
         # Check if there is at least one file ending in a standard fastq suffix
-        fq_pat = re.compile(r'^.+((.fq(.gz)?$)|(.fastq(.gz)?$))')
+        fq_pat = re.compile(r'^.+((\.fq(\.gz)?)|(\.fastq(\.gz)?))$')
         has_fastq = False
         for f in contents:
             if re.match(fq_pat, f):
@@ -285,7 +285,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
         groups = args['expr_groups']
         # throw an error if the expr_groups file is not an excel file 
         if not groups[-4:] == "xlsx" and not groups[-3:] == "xls":
-            self.sheet_logger.error(
+            self.pipe_logger.error(
                 'A filetype different than an excel spreadsheet was '
                 'supplied for --expr_groups. You supplied a filetype '
                 f'end in {groups[-4:]}. Please replace this with an excel '
@@ -298,17 +298,17 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
                                      keep_default_na = False)
         # throw an error if SampleName is not a header in the group sheet
         if not 'SampleName' in groups_sheet:
-            self.sheet_logger.error(
+            self.pipe_logger.error(
                 'The xlsx experimental groups first sheet must have a '
                 'column named "SampleName"')
             DieGracefully.die_gracefully(DieGracefully.BRNASEQ_NO_SAMP_GPS)   
         # throw an error if Group is not a header in the group sheet
         if not 'Group' in groups_sheet:
-            self.sheet_logger.error(
+            self.pipe_logger.error(
                 'The xlsx experimental groups first sheet must have a '
                 'column named "Group"')
             DieGracefully.die_gracefully(DieGracefully.BRNASEQ_NO_SAMP_GPS)
-        return(args)
+        return args
 
     def _create_stub_groupsheet(self, args):
         ## This produces an experimental groups xlsx with SampleNames
@@ -333,22 +333,24 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
             groups.to_excel(writer, sheet_name='groups', index = False)
             contrasts.to_excel(writer, sheet_name='contrasts', index = False)
         # return the new path to add back to args
-        return(os.path.realpath(expr_group_path))
+        return os.path.realpath(expr_group_path)
 
     def _get_sample_names(self, fq_dir):
-        # Four different regexs to determine if its a fastq then grab the 
+        # Four different regexs to determine if its a fastq then grab the
         # sample name, for fastqs from UMGC vs. SRA
         samp_re = re.compile(
             r'(_S[0-9]+)?'
             r'(_[ATCG]{4,})?'
             r'(_L00[1-8])?'
-            r'(_R(1|2))?_001\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
+            r'(_R(1|2))?'
+            r'(_001)?'
+            r'\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
         # RE to get forwards reads fq files
         fq_re = re.compile(
-            r'^.+[^_R2]_001\.((fq(\.gz)?$)|(fastq(\.gz)?$))',
+            r'^.+_R1(_001)?\.((fq(\.gz)?$)|(fastq(\.gz)?$))',
             flags=re.I)
-        sra_re = re.compile(r'^.+_1\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
-        sra_samp_re = re.compile(r'_(1|2)\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
+        sra_re = re.compile(r'^.+_1\.((fq(\.gz)?)|(fastq(\.gz)?))$')
+        sra_samp_re = re.compile(r'_(1|2)\.((fq(\.gz)?)|(fastq(\.gz)?))$')
         # iterate through contents of the fastq dir and grab the sample names
         fq_dir_contents = os.listdir(fq_dir)
         sample_names = []
@@ -362,7 +364,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
             elif re.match(sra_re, current_file):
                 sn = re.sub(sra_samp_re, '', current_file)
                 sample_names.append(sn)
-        return(sample_names)
+        return sample_names
 
 
     def qsub(self):

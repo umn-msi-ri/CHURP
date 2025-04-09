@@ -205,14 +205,16 @@ or gzipped FASTQ files. Please ensure that the files  have names that conform
 to the standard file name format and end in one of the following: .fastq, 
 .fastq.gz, .fq., .fq.gz (case sensitive).
 
-Example valid filenames:
-Sample01_S01_R1_001.fastq.gz
-Sample01_S01_R2_001.fastq.gz
+Here are examples:
 
-or
+UMGC (no lane identifier, e.g. _L001_, is included):
+Sample01_S1_R1_001.fastq.gz
+Sample01_S1_R2_001.fastq.gz
 
-SRR7989635_1.fastq.gz
-SRR7989635_2.fastq.gz\n\n"""
+SRA:
+SRR12345678_1.fastq.gz
+SRR12345678_2.fastq.gz\n\n"""
+
     sys.stderr.write(msg)
     return
 
