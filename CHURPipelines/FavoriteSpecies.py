@@ -5,7 +5,7 @@ specifying genome resources in the MSI bioref resource."""
 import CHURPipelines
 
 # The latest Ensembl releases pulled into bioref. Update this when bioref
-# updtaes!
+# updates!
 ENSEMBL_RELEASES = {
     'main': '113',
     'plants': '60',

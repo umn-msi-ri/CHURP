@@ -38,11 +38,9 @@ NEFARIOUS_CHAR = 99
 CREDITS = """----------
 Thank you for using CHURP. This software was developed by the Research
 Informatics (RI) group at MSI with funding from the University of
-Minnesota Informatics Institute (UMII). For help, please contact
-help@msi.umn.edu.
+Minnesota Informatics Institute (UMII). 
+For help, please contact ribhelp@msi.umn.edu.
 
-https://www.msi.umn.edu/
-https://research.umn.edu/units/umii\n
 """
 
 # Define a series of functions that just write messages to the terminal. We
@@ -251,7 +249,7 @@ def brnaseq_bad_groups():
     msg = CREDITS + """----------
 ERROR
 
-The groups template CSV file that you have provided does not exist or cannot
+The groups template file that you have provided does not exist or cannot
 be read. Please check your path for any typos and that any spaces or special
 characters are properly quoted or escaped.\n\n"""
     sys.stderr.write(msg)
@@ -259,12 +257,12 @@ characters are properly quoted or escaped.\n\n"""
 
 
 def brnaseq_no_sample_groups():
-    """Call this function when a user supplies a groups CSV that does not have
+    """Call this function when a user supplies a groups file that does not have
     any information for the samples in the FASTQ directory."""
     msg = CREDITS + """----------
 ERROR
 
-The groups CSV file that you supplied does not contain any information about
+The groups file that you supplied does not contain any information about
 the samples that were found in the FASTQ directory. Check that you supplied the
 correct directory with -f, and that your sample names match exactly between the
 CSV and the FASTQ directory. Use the template from the "group_template"
@@ -278,17 +276,15 @@ def group_no_pipe():
     """Call this function when a user runs the group_template pipeline, but
     does not supply a pipeline for which to build a group template."""
     msg = CREDITS + """----------
+ERROR
+
+A <pipeline> subcommand is missing for group_template.
+
 Usage: churp.py group_template <pipeline> <options>
+Example: churp.py group_template bulk_rnaseq <options>
 
-This subcommand allows you to build templates for experimental metadata files.
-These files specify experimental conditions or treatment groups for comparisons
-in downstream analyses. The files from this subcommand, for example, can be
-used to perform differential gene expression testing among treatment groups.
-Takes a pipeline as an argument, followed by modifiers to control the output.
-See the pipeline-specific help (-h) or the user manual for details.
-
-Currently available pipelines:
-    - bulk_rnaseq\n\n"""
+Currently available group_template subcommands:
+    - group_template bulk_rnaseq\n\n"""
     sys.stderr.write(msg)
     return
 
