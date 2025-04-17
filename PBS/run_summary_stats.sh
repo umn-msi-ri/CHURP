@@ -165,8 +165,8 @@ then
     featureCounts \
         -a "${GTFFILE}" \
         -T ${SLURM_CPUS_PER_TASK} \
-        -B \ # only fragments that have both ends successfully aligned will be considered for summarization
-        -p \ #paired-end reads
+        -B \
+        -p \
         --countReadPairs \
         -Q 10 \
         -s "${STRAND}" \
