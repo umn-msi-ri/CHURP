@@ -215,7 +215,8 @@ export BASH_XTRACEFD=5
 set -x
 
 # Set paths to BBDuk, seqtk, and the SILVA databases
-DEPS_DIR="/home/msistaff/public/CHURP_Deps/v${PIPELINE_VERSION}"
+#DEPS_DIR="/home/msistaff/public/CHURP_Deps/v${PIPELINE_VERSION}"
+DEPS_DIR="/common/software/install/migrated/churp/bin/CHURP_Deps/v${PIPELINE_VERSION}"
 SILVA_REF="${DEPS_DIR}/db/SILVA_138.1_LSU-SSU_NR99_Dedup_Kmers.fasta.gz"
 COLLAPSE_GTF="${DEPS_DIR}/Supp/GTEx_Pipeline/collapse_annotation.py"
 #RNASEQC="${DEPS_DIR}/Supp/RNASeQC/rnaseqc.v2.3.4.linux"
