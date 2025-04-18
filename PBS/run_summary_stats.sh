@@ -9,9 +9,12 @@ set -o pipefail
 export PATH="/opt/msi/bin:/usr/share/Modules/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/ibutils/bin:/opt/puppetlabs/bin"
 
 # Load our conda environment
-module load python3/3.8.3_anaconda2020.07_mamba
-source /home/msistaff/public/CHURP_Deps/v1/Conda_Initialize.sh
-conda activate /home/msistaff/public/CHURP_Deps/v1/churp_env
+#module load python3/3.8.3_anaconda2020.07_mamba
+#source /home/msistaff/public/CHURP_Deps/v1/Conda_Initialize.sh
+#conda activate /home/msistaff/public/CHURP_Deps/v1/churp_env
+
+module load miniforge/24.3
+source activate	/common/software/install/migrated/churp/bin/CHURP_Deps/v1/churp_env
 
 # Export the PS4 variable for the trace
 # Taken from https://wiki.bash-hackers.org/scripting/debuggingtips
