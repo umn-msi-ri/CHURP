@@ -17,6 +17,7 @@ library('gtools')
 library('grid')
 library('readxl')
 library('tools')
+library('openxlsx')
 
 #grab the working and output directories, as well as the sample sheet,
 # and merged raw counts matrix, and the groupsheet
