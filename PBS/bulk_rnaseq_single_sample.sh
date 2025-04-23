@@ -9,9 +9,11 @@ set -o pipefail
 export PATH="/opt/msi/bin:/usr/share/Modules/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/ibutils/bin:/opt/puppetlabs/bin"
 
 # Load our conda environment
-module load python3/3.8.3_anaconda2020.07_mamba
-source /home/msistaff/public/CHURP_Deps/v1/Conda_Initialize.sh
-conda activate /home/msistaff/public/CHURP_Deps/v1/churp_env
+#module load python3/3.8.3_anaconda2020.07_mamba
+#source /home/msistaff/public/CHURP_Deps/v1/Conda_Initialize.sh
+#conda activate /home/msistaff/public/CHURP_Deps/v1/churp_env
+module load miniforge/24.3
+source activate /common/software/install/migrated/churp/bin/CHURP_Deps/v1/churp_env
 
 # Export the PS4 variable for the trace
 # Taken from https://wiki.bash-hackers.org/scripting/debuggingtips
@@ -213,7 +215,8 @@ export BASH_XTRACEFD=5
 set -x
 
 # Set paths to BBDuk, seqtk, and the SILVA databases
-DEPS_DIR="/home/msistaff/public/CHURP_Deps/v${PIPELINE_VERSION}"
+#DEPS_DIR="/home/msistaff/public/CHURP_Deps/v${PIPELINE_VERSION}"
+DEPS_DIR="/common/software/install/migrated/churp/bin/CHURP_Deps/v${PIPELINE_VERSION}"
 SILVA_REF="${DEPS_DIR}/db/SILVA_138.1_LSU-SSU_NR99_Dedup_Kmers.fasta.gz"
 COLLAPSE_GTF="${DEPS_DIR}/Supp/GTEx_Pipeline/collapse_annotation.py"
 #RNASEQC="${DEPS_DIR}/Supp/RNASeQC/rnaseqc.v2.3.4.linux"

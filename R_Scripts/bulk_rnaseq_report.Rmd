@@ -115,8 +115,6 @@ if(large_dataset) {
 library(knitr)
 ```
 
-![](/home/msistaff/public/CHURP_Deps/Assets/UMII_Graphic_rs.png)
-
 PURR is the RNASeq analysis pipeline that is housed within CHURP, the
 **C**ollection of **H**ierarchical **U**MII/**R**I **P**ipelines. CHURP
 is developed and maintained by the Research Informatics (RI) group at

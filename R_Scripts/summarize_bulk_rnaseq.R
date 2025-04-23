@@ -1,8 +1,8 @@
 ############################
-# CHURP 1.0.0 bulk RNA-seq summary script
+# CHURP bulk RNA-seq summary script
 # See run_summary_stats.sh for additional run context.
 # See https://bioconductor.org/packages/release/bioc/vignettes/edgeR/inst/doc/edgeRUsersGuide.pdf for the edgeR user manual.
-# Contact help@msi.umn.edu for questions
+# Contact ribhelp@msi.umn.edu for questions
 ############################
 
 
@@ -17,6 +17,7 @@ library('gtools')
 library('grid')
 library('readxl')
 library('tools')
+library('openxlsx')
 
 #grab the working and output directories, as well as the sample sheet,
 # and merged raw counts matrix, and the groupsheet

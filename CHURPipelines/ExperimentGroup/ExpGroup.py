@@ -16,7 +16,7 @@ from CHURPipelines.FileOps import dir_funcs
 
 
 class ExpGroup(object):
-    """The class that will hold the experimetnal group data, as well as write
+    """The class that will hold the experimental group data, as well as write
     the sheet to the output directory."""
 
     def __init__(self, args):
@@ -121,15 +121,16 @@ class ExpGroup(object):
             r'(_S[0-9]+)?'
             r'(_[ATCG]{4,})?'
             r'(_L00[1-8])?'
-            r'(_R(1|2))?_001\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
+            r'(_R(1|2))?'
+            r'(_001)?'
+            r'\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
         # regular expression to get files that look like not-R2 FASTQ files
         # in the standard Illumina format
-        fq_re = re.compile(
-            r'^.+[^_R2]_001\.((fq(\.gz)?$)|(fastq(\.gz)?$))',
+        fq_re = re.compile(r'^.+_R1(_001)?\.((fq(\.gz)?$)|(fastq(\.gz)?$))',
             flags=re.I)
         # These regex lines match SRA-style filenames
-        sra_re = re.compile(r'^.+_1\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
-        sra_samp_re = re.compile(r'_(1|2)\.((fq(\.gz)?$)|(fastq(\.gz)?$))')
+        sra_re = re.compile(r'^.+_1\.((fq(\.gz)?)|(fastq(\.gz)?))$')
+        sra_samp_re = re.compile(r'_(1|2)\.((fq(\.gz)?)|(fastq(\.gz)?))$')
         cont = os.listdir(d)
         sd = {}
         for f in cont:

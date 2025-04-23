@@ -2,14 +2,13 @@
 """CHURP control script, for running standard analyses of various types of
 high-throughput sequencing data analyses. This script is written to work on the
 University of Minnesota Supercomputing Institute clusters with data from the
-University of Minnesota Genomics Centre. The following analysis pipelines are
+University of Minnesota Genomics Center. The following analysis pipelines are
 supported:
     - group_template
     - bulk_rnaseq
     - genome_aliases
-Questions should be directed to help@msi.umn.edu.
-Version: 1.0.1
-2024-23-07
+
+Questions should be directed to ribhelp@msi.umn.edu.
 """
 
 # Check the Python version
