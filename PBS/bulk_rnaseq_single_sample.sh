@@ -318,11 +318,14 @@ if [ ! -f fastqc.done ]; then
     if [ "${PE}" = "true" ]
     then
         echo "# ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID} $(date '+%F %T'): Running fastqc on ${R1FILE} and ${R2FILE}." >> "${LOG_FNAME}"
+	# add path to updated adapters list for FastQC that includes Aviti and Ultima sequences 
+	ADAPTERS="${DEPS_DIR}/db/fastqc_adapters/adapter_list.txt"
         fastqc \
             -t 2 \
             --extract \
             --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
-            "${R1FILE}" \
+	    -a "${ADAPTERS}" \
+	    "${R1FILE}" \
             "${R2FILE}" \
             2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
         && touch fastqc.done
@@ -331,7 +334,8 @@ if [ ! -f fastqc.done ]; then
         fastqc \
             --extract \
             --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
-            "${R1FILE}" \
+	    -a "${ADAPTERS}" \
+	    "${R1FILE}" \
             2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
             && touch fastqc.done
     fi
@@ -399,7 +403,8 @@ if [ "${TRIM}" = "yes" ]; then
                 -t 2 \
                 --extract \
                 --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
-                "${SAMPLENM}_1P.fq.gz" \
+		-a "${ADAPTERS}" \
+		"${SAMPLENM}_1P.fq.gz" \
                 "${SAMPLENM}_2P.fq.gz" \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch fastqc.trim.done
@@ -408,7 +413,8 @@ if [ "${TRIM}" = "yes" ]; then
             fastqc \
                 --extract \
                 --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
-                "${SAMPLENM}_trimmed.fq.gz" \
+		-a "${ADAPTERS}" \
+		"${SAMPLENM}_trimmed.fq.gz" \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch fastqc.trim.done
         fi
