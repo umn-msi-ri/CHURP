@@ -167,7 +167,7 @@ def add_args(ap):
         metavar='<adapter file.fa>',
         dest='adapters',
         help=('Adapters to use for trimming with Trimmomatic. Defaults to '
-              '/home/msistaff/public/CHURP_Deps/v1/db/all_illumina_adapters.fa.'
+              '/common/software/install/migrated/churp/bin/CHURP_Deps/v1/db/all_adapters.fa.'
               ' --no-trim causes these to not be used.'),
         default=None)
     ap_opt.add_argument(

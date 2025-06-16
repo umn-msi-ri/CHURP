@@ -184,7 +184,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
         except OSError:
             DieGracefully.die_gracefully(DieGracefully.BAD_GTF)
         if not a['adapters']:
-            a['adapters'] = '/home/msistaff/public/CHURP_Deps/v1/db/all_illumina_adapters.fa'
+            a['adapters'] = '/common/software/install/migrated/churp/bin/CHURP_Deps/v1/db/all_adapters.fa'
         else:
             try:
                 a['adapters'] = os.path.realpath(
