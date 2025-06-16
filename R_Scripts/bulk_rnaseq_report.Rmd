@@ -123,8 +123,6 @@ Institute (UMII).
 
 <https://www.msi.umn.edu/>
 
-<https://research.umn.edu/units/umii>
-
 This report was generated with CHURP version
 `r params["churp_version"]`.
 
