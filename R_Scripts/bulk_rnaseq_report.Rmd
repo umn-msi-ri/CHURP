@@ -486,10 +486,9 @@ if(large_dataset) {
 ```
 
 #### Table
-
+Number of read pairs (from subsample) and percentage of library that is estimated to be
+derived from ribosomal RNA.
 ```{r bbduk_table, echo=FALSE, message=FALSE}
-cat("Number of read pairs (from subsample) and percentage of library \n",
-	    "that is estimated to be derived from ribosomal RNA.\n")
 bbduk_summary
 
 #knitr::kable(bbduk_summary,
@@ -1473,6 +1472,8 @@ if(large_dataset) {
 ```
 
 #### Counts-Based Table
+Summary of alignment from HISAT2 based on fragment counts. Note that if the samples are paired-end, then each fragment is represented by 2 reads. If the samples are single-end, then each fragment is represented by 1 read.
+
 ```{r cb_table, echo=F}
 hisat_tab <- hisat_summary
 names(hisat_tab) <- c(
@@ -1482,11 +1483,6 @@ names(hisat_tab) <- c(
     "Uniquely Mapped",
     "Multiply Mapped",
     "Discordantly Mapped")
-cat("Summary of alignment from HISAT2 based on \n",
-    "fragment counts. Note that if the samples are \n",
-    "paired-end, then each fragment is represented \n",
-    "by 2 reads. If the samples are single-end, then \n",
-    "each fragment is represented by 1 read\n")
 hisat_tab
 
 # knitr::kable(hisat_tab,
@@ -1556,6 +1552,7 @@ if(large_dataset) {
 
 
 #### Proportion-Based Table
+Summary of alignment from HISAT2 based on percentage of total reads. Note that if the samples are paired-end, then each fragment is represented by 2 reads. If the samples are single-end, then each fragment is represented by 1 read.
 
 ```{r propb_table, echo=F}
 hisat_prop <- data.frame(
@@ -1588,12 +1585,6 @@ names(hisat_prop) <- c(
     "Uniquely Mapped",
     "Multiply Mapped",
     "Discordantly Mapped")
-
-cat("Summary of alignment from HISAT2 based on \n",
-    "percentage of total reads. Note that if the samples are \n",
-    "paired-end, then each fragment is represented \n",
-    "by 2 reads. If the samples are single-end, then \n",
-    "each fragment is represented by 1 read\n")
 
 hisat_prop
 #knitr::kable(hisat_prop,
