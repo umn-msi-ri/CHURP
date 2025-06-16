@@ -178,7 +178,8 @@ names(sumsheet) <- c(
     "Trim Options",
     "Strand")
 # Show only the name, group and file name
-knitr::kable(sumsheet[,1:4])
+#knitr::kable(sumsheet[,1:4])
+sumsheet[,1:4]
 ```
 
 # Download and Save Important Files
@@ -292,7 +293,8 @@ names(read_summary) <- c(
     "Raw R2 Count",
     "Trimmed R1 Count",
     "Trimmed R2 Count")
-knitr::kable(read_summary)
+#knitr::kable(read_summary)
+read_summary
 ```
 
 ### Insert Size Metrics {.tabset}
@@ -486,8 +488,12 @@ if(large_dataset) {
 #### Table
 
 ```{r bbduk_table, echo=FALSE, message=FALSE}
-knitr::kable(bbduk_summary,
-    caption="Number of read pairs (from subsample) and percentage of library that is estimated to be derived from ribosomal RNA.")
+cat("Number of read pairs (from subsample) and percentage of library \n",
+	    "that is estimated to be derived from ribosomal RNA.\n")
+bbduk_summary
+
+#knitr::kable(bbduk_summary,
+#    caption="Number of read pairs (from subsample) and percentage of library that is estim#ated to be derived from ribosomal RNA.")
 ```
 
 ### Basecall Quality {.tabset}
@@ -1476,8 +1482,15 @@ names(hisat_tab) <- c(
     "Uniquely Mapped",
     "Multiply Mapped",
     "Discordantly Mapped")
-knitr::kable(hisat_tab,
-    caption="Summary of alignment from HISAT2 based on fragment counts. Note that if the samples are paired-end, then each fragment is represented by 2 reads. If the samples are single-end, then each fragment is represented by 1 read.")
+cat("Summary of alignment from HISAT2 based on \n",
+    "fragment counts. Note that if the samples are \n",
+    "paired-end, then each fragment is represented \n",
+    "by 2 reads. If the samples are single-end, then \n",
+    "each fragment is represented by 1 read\n")
+hisat_tab
+
+# knitr::kable(hisat_tab,
+#     caption="Summary of alignment from HISAT2 based on fragment counts. Note that if the samples are paired-end, then each fragment is represented by 2 reads. If the samples are single-end, then each fragment is represented by 1 read.")
 ```
 
 #### Proportion-Based Plots
@@ -1575,8 +1588,16 @@ names(hisat_prop) <- c(
     "Uniquely Mapped",
     "Multiply Mapped",
     "Discordantly Mapped")
-knitr::kable(hisat_prop,
-    caption="Summary of alignment from HISAT2 based on percentage of total reads. Note that if the samples are paired-end, then each fragment is represented by 2 reads. If the samples are single-end, then each fragment is represented by 1 read.")
+
+cat("Summary of alignment from HISAT2 based on \n",
+    "percentage of total reads. Note that if the samples are \n",
+    "paired-end, then each fragment is represented \n",
+    "by 2 reads. If the samples are single-end, then \n",
+    "each fragment is represented by 1 read\n")
+
+hisat_prop
+#knitr::kable(hisat_prop,
+#    caption="Summary of alignment from HISAT2 based on percentage of total reads. Note that if the samples are paired-end, then each fragment is represented by 2 reads. If the samples are single-end, then each fragment is represented by 1 read.")
 ```
 
 ### Feature Counts
@@ -1830,7 +1851,8 @@ are read out of the samplesheet:
 ```{r expr_groups, echo=FALSE, message=FALSE}
 sheet_sub <- sheet[,c(1, 2)]
 names(sheet_sub) <- c("Sample Name", "Group")
-knitr::kable(sheet_sub)
+sheet_sub
+#knitr::kable(sheet_sub)
 ```
 
 #### Results Summary
@@ -2050,16 +2072,17 @@ This is the list of programs that we use in the single-sample workflow
 for read cleaning and mapping.
 
 ```         
-python3/3.8.3_anaconda2020.07_mamba
+miniforge/24.3
 hisat2/2.1.0
 fastqc/0.12.1
+cutadapt/4.4
 trimmomatic/0.39
 samtools/1.18
 picard/3.1.1
 R/4.2.3
-openjdk-20.0.0
+openjdk-22.0.1-internal
 BBMap-39.01
-Seqtk-1.4
+Seqtk-1.4-r122
 gtfToGenePred-447
 RNASeQC-2.4.2
 ```
@@ -2072,5 +2095,5 @@ programs.
 
 ```         
 subread-2.0.6
-pandoc-3.1.13
+pandoc-3.7.0.2
 ```
