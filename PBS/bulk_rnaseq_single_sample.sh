@@ -221,6 +221,8 @@ SILVA_REF="${DEPS_DIR}/db/SILVA_138.1_LSU-SSU_NR99_Dedup_Kmers.fasta.gz"
 COLLAPSE_GTF="${DEPS_DIR}/Supp/GTEx_Pipeline/collapse_annotation.py"
 #RNASEQC="${DEPS_DIR}/Supp/RNASeQC/rnaseqc.v2.3.4.linux"
 RNASEQC="${DEPS_DIR}/Supp/RNASeQC/rnaseqc.v2.4.2.linux"
+# add path to updated adapters list for FastQC that includes Aviti and Ultima sequences 
+ADAPTERS="${DEPS_DIR}/db/fastqc_adapters/adapter_list.txt"
 
 # Check if we are running in paired or single end mode
 if [ -z "${R2FILE}" ]
@@ -318,8 +320,6 @@ if [ ! -f fastqc.done ]; then
     if [ "${PE}" = "true" ]
     then
         echo "# ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID} $(date '+%F %T'): Running fastqc on ${R1FILE} and ${R2FILE}." >> "${LOG_FNAME}"
-	# add path to updated adapters list for FastQC that includes Aviti and Ultima sequences 
-	ADAPTERS="${DEPS_DIR}/db/fastqc_adapters/adapter_list.txt"
         fastqc \
             -t 2 \
             --extract \
