@@ -504,25 +504,29 @@ each read were trimmed out with
 [Trimmomatic](https://github.com/usadellab/Trimmomatic).
 
 ```{r raw_qual_fun, echo=FALSE}
-# Functions for Read Quality Plots
+
+# Parameters
 # Define a boolean vector for controlling how many tick labels to show
 axis_skip <- c(TRUE, FALSE, FALSE, FALSE, FALSE)
 # And one for the fastqc-style plots
 fqc_axis_skip <- c(TRUE, FALSE)
 # Define the quality breaks for color-changes
-qual_breaks <- c(0, 10, 20, 25, 30, 40, 45)
+qual_breaks <- c(0, 20, 30, 35, 40, 50, 55)
 # Define the colors for the quality bins
 qual_cols <- c("darkred", "indianred", "yellow", "gold", "darkgreen", "green")
 # Define names for the columns of the base quality data.frame
 qual_names <- c("Base", "QMean", "QMedian", "Q25", "Q75", "Q10", "Q90")
+
+
+# Functions for Read Quality Plots
 plotqual_first <- function(sn, draw_ax, rt) {
-    allquals <- matrix(0:45)
+    allquals <- matrix(0:55)
     image(allquals, breaks=qual_breaks, col=qual_cols, axes=FALSE,
         main="Quality Key")
     axis(
         side=1,
-        at=seq(0, 1, length.out=46)[axis_skip],
-        labels=as.character(round(seq(0,45, length.out=10))),
+        at=seq(0, 1, length.out=56)[axis_skip],
+        labels=as.character(round(seq(0,55, length.out=12))),
         las=1,
         cex.axis=0.9,
         tck=-0.05)
@@ -1902,7 +1906,8 @@ A subsample of 10,000 reads or read pairs were sampled from each
 sample's reads. This subsample of 10,000 reads was searched for
 contamination from ribosomal RNA using a representative rRNA sequence
 list from the SILVA database release 138. Raw reads were summarized with
-FastQC, and optionally trimmed with Trimmomatic.
+FastQC, and optionally trimmed with Trimmomatic. It was assumed that the
+sequences' quality is encoded using the Phred33 score. 
 
 If trimmed, the Trimmomatic options used were:
 
@@ -2066,7 +2071,6 @@ for read cleaning and mapping.
 miniforge/24.3
 hisat2/2.1.0
 fastqc/0.12.1
-cutadapt/4.4
 trimmomatic/0.39
 samtools/1.18
 picard/3.1.1

@@ -375,6 +375,7 @@ if [ "${TRIM}" = "yes" ]; then
             trimmomatic \
                 PE \
                 -threads "${SLURM_CPUS_PER_TASK}" \
+		-phred33 \
                 "${R1FILE}" "${R2FILE}" \
                 "${SAMPLENM}_1P.fq.gz" "${SAMPLENM}_1U.fq.gz" "${SAMPLENM}_2P.fq.gz" "${SAMPLENM}_2U.fq.gz" \
                 $(echo "${TRIMOPTS}" | envsubst) \
@@ -385,7 +386,8 @@ if [ "${TRIM}" = "yes" ]; then
             trimmomatic \
                 SE \
                 -threads "${SLURM_CPUS_PER_TASK}" \
-                "${R1FILE}" \
+                -phred33 \
+		"${R1FILE}" \
                 "${SAMPLENM}_trimmed.fq.gz" \
                 $(echo "${TRIMOPTS}" | envsubst) \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
