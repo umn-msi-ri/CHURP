@@ -8,10 +8,10 @@ from CHURPipelines.FileOps import default_dirs
 EXTRA_TRIM_HELP = """Must be passed as a quoted string with = after the option.
 
 Example:
---trimmomatic-opts="-phred64 -threads 4".
+--trimmomatic-opts="ILLUMINACLIP:4:15:7:2:true".
 
-By default we use the following options:
--phred33 ILLUMINACLIP:4:15:7:2:true LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:18.
+By default we assume Phred33 quality scores and use the following options:
+ILLUMINACLIP:4:15:7:2:true LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:18.
 See the Trimmomatic manual for explanation of these parameters.
 """
 
