@@ -8,9 +8,9 @@ from CHURPipelines.FileOps import default_dirs
 EXTRA_TRIM_HELP = """Must be passed as a quoted string with = after the option.
 
 Example:
---trimmomatic-opts="-phred64 -threads 4".
+--trimmomatic-opts="ILLUMINACLIP:4:15:7:2:true".
 
-By default we use the following options:
+By default we assume Phred33 quality scores and use the following options:
 ILLUMINACLIP:4:15:7:2:true LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:18.
 See the Trimmomatic manual for explanation of these parameters.
 """
@@ -167,7 +167,7 @@ def add_args(ap):
         metavar='<adapter file.fa>',
         dest='adapters',
         help=('Adapters to use for trimming with Trimmomatic. Defaults to '
-              '/home/msistaff/public/CHURP_Deps/v1/db/all_illumina_adapters.fa.'
+              '/common/software/install/migrated/churp/bin/CHURP_Deps/v1/db/all_adapters.fa.'
               ' --no-trim causes these to not be used.'),
         default=None)
     ap_opt.add_argument(

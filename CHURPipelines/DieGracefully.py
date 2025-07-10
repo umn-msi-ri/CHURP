@@ -146,8 +146,9 @@ ERROR
 You did not specify sufficient options to run the bulk_rnaseq subcommand of
 CHURP. You must specify a FASTQ directory (-f). Additionally, you must either
 specify a path to a HISAT2 index (-x) and GTF (-g), or an organism name (-r).
-If you are building a group template file, you need only specify a FASTQ
-directory. Please fix your command line and re-run.\n\n"""
+If you have a groups file use the -e option, otherwise use --no-submit and 
+review the one that is created automatically.
+Please fix your command line and re-run.\n\n"""
     sys.stderr.write(msg)
     return
 

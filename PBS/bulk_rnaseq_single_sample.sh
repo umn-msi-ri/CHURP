@@ -221,6 +221,8 @@ SILVA_REF="${DEPS_DIR}/db/SILVA_138.1_LSU-SSU_NR99_Dedup_Kmers.fasta.gz"
 COLLAPSE_GTF="${DEPS_DIR}/Supp/GTEx_Pipeline/collapse_annotation.py"
 #RNASEQC="${DEPS_DIR}/Supp/RNASeQC/rnaseqc.v2.3.4.linux"
 RNASEQC="${DEPS_DIR}/Supp/RNASeQC/rnaseqc.v2.4.2.linux"
+# add path to updated adapters list for FastQC that includes Aviti and Ultima sequences 
+ADAPTERS="${DEPS_DIR}/db/fastqc_adapters/adapter_list.txt"
 
 # Check if we are running in paired or single end mode
 if [ -z "${R2FILE}" ]
@@ -322,7 +324,8 @@ if [ ! -f fastqc.done ]; then
             -t 2 \
             --extract \
             --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
-            "${R1FILE}" \
+	    -a "${ADAPTERS}" \
+	    "${R1FILE}" \
             "${R2FILE}" \
             2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
         && touch fastqc.done
@@ -331,7 +334,8 @@ if [ ! -f fastqc.done ]; then
         fastqc \
             --extract \
             --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
-            "${R1FILE}" \
+	    -a "${ADAPTERS}" \
+	    "${R1FILE}" \
             2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
             && touch fastqc.done
     fi
@@ -371,6 +375,7 @@ if [ "${TRIM}" = "yes" ]; then
             trimmomatic \
                 PE \
                 -threads "${SLURM_CPUS_PER_TASK}" \
+		-phred33 \
                 "${R1FILE}" "${R2FILE}" \
                 "${SAMPLENM}_1P.fq.gz" "${SAMPLENM}_1U.fq.gz" "${SAMPLENM}_2P.fq.gz" "${SAMPLENM}_2U.fq.gz" \
                 $(echo "${TRIMOPTS}" | envsubst) \
@@ -381,7 +386,8 @@ if [ "${TRIM}" = "yes" ]; then
             trimmomatic \
                 SE \
                 -threads "${SLURM_CPUS_PER_TASK}" \
-                "${R1FILE}" \
+                -phred33 \
+		"${R1FILE}" \
                 "${SAMPLENM}_trimmed.fq.gz" \
                 $(echo "${TRIMOPTS}" | envsubst) \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
@@ -399,7 +405,8 @@ if [ "${TRIM}" = "yes" ]; then
                 -t 2 \
                 --extract \
                 --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
-                "${SAMPLENM}_1P.fq.gz" \
+		-a "${ADAPTERS}" \
+		"${SAMPLENM}_1P.fq.gz" \
                 "${SAMPLENM}_2P.fq.gz" \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch fastqc.trim.done
@@ -408,7 +415,8 @@ if [ "${TRIM}" = "yes" ]; then
             fastqc \
                 --extract \
                 --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
-                "${SAMPLENM}_trimmed.fq.gz" \
+		-a "${ADAPTERS}" \
+		"${SAMPLENM}_trimmed.fq.gz" \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch fastqc.trim.done
         fi
