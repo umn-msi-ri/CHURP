@@ -1,5 +1,25 @@
 # CHURP Changelog
-2024-07-23
+2025-07-10
+
+## [1.1.0] 2025-07-10
+Minor and patch changes to CHURP and PURR. The --mem and --queue defaults will be added.
+Updated bioref pointers
+
+### Added
+New conda env with miniforge/24.3 and other software dependencies 
+and database files have been migrated to /common/software from /home/msistaff/public.
+Updated adapter sequences for fastqc and trimmomatic command to handle aviti watchmaker libraries.
+Updated bioref versions in FavoriteSpecies.py.
+
+### Modified
+HTML report has minor cosmetic changes, including table formatting, updates to software version numbers, and an updated color scale for the base quality score plots.
+Updated help messages and bioref version numbers in FavoriteSpecies.py.
+
+### Removed
+UMII graphic.
+
+### Bugs Fixed
+The default --mem and --queue settings have been updated and are now recognized by CHURP so they do not need to be specified at the command line.
 
 ## [1.0.1] 2024-07-23
 Patch-level release of CHURP and PURR. This update adds new gene filtering
