@@ -1,5 +1,5 @@
 # CHURP Changelog
-2025-07-11
+2025-07-10
 
 ## [1.1.0] 2025-07-10
 Minor and patch changes to CHURP and PURR. The --mem and --queue defaults will be added.
