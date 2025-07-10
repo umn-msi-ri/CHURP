@@ -511,9 +511,13 @@ axis_skip <- c(TRUE, FALSE, FALSE, FALSE, FALSE)
 # And one for the fastqc-style plots
 fqc_axis_skip <- c(TRUE, FALSE)
 # Define the quality breaks for color-changes
-qual_breaks <- c(0, 20, 30, 35, 40, 50, 55)
+qual_breaks <- c(0,10,20,25,30,40,55)
+#qual_breaks <- c(0, 30, 35, 50, 55)
 # Define the colors for the quality bins
-qual_cols <- c("darkred", "indianred", "yellow", "gold", "darkgreen", "green")
+qual_cols <- c("darkred","salmon3","yellow","gold","darkgreen","green")
+
+#qual_cols <- c("darkred", "yellow", "darkgreen", "green")
+
 # Define names for the columns of the base quality data.frame
 qual_names <- c("Base", "QMean", "QMedian", "Q25", "Q75", "Q10", "Q90")
 
