@@ -204,7 +204,6 @@ echo "##########################################################################
 echo "# $(date '+%F %T'): Analysis started for ${SAMPLENM}" >> "${LOG_FNAME}"
 echo "# $(date '+%F %T'): Job ID: ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}" >> "${LOG_FNAME}"
 
-
 # For future debugging, print which java we are using
 echo "# ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID} $(date '+%F %T'): Using $(which java)" >> "${LOG_FNAME}"
 
@@ -367,6 +366,10 @@ done
 echo "# $(date '+%F %T'): Finished section ${LOG_SECTION}" >> /dev/stderr
 LOG_SECTION="Trimmomatic"
 echo "# $(date '+%F %T'): Entering section ${LOG_SECTION}" >> /dev/stderr
+
+# capping threads for trimmomatic at 16
+TRIMTHREADS=$(( SLURM_CPUS_PER_TASK < 16 ? SLURM_CPUS_PER_TASK : 16 ))
+
 if [ "${TRIM}" = "yes" ]; then
     if [ ! -f trimmomatic.done ]; then
         if [ "${PE}" = "true" ]
@@ -374,10 +377,10 @@ if [ "${TRIM}" = "yes" ]; then
             echo "# ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID} $(date '+%F %T'): Running trimmomatic on ${R1FILE} and ${R2FILE}." >> "${LOG_FNAME}"
             trimmomatic \
                 PE \
-                -threads "${SLURM_CPUS_PER_TASK}" \
+                -threads "${TRIMTHREADS}" \
 		-phred33 \
                 "${R1FILE}" "${R2FILE}" \
-                "${SAMPLENM}_1P.fq.gz" "${SAMPLENM}_1U.fq.gz" "${SAMPLENM}_2P.fq.gz" "${SAMPLENM}_2U.fq.gz" \
+                "${SAMPLENM}_1P.fq" "${SAMPLENM}_1U.fq" "${SAMPLENM}_2P.fq" "${SAMPLENM}_2U.fq" \
                 $(echo "${TRIMOPTS}" | envsubst) \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch trimmomatic.done
@@ -385,10 +388,10 @@ if [ "${TRIM}" = "yes" ]; then
             echo "# ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID} $(date '+%F %T'): Running trimmomatic on ${R1FILE}." >> "${LOG_FNAME}"
             trimmomatic \
                 SE \
-                -threads "${SLURM_CPUS_PER_TASK}" \
+                -threads "${TRIMTHREADS}" \
                 -phred33 \
 		"${R1FILE}" \
-                "${SAMPLENM}_trimmed.fq.gz" \
+                "${SAMPLENM}_trimmed.fq" \
                 $(echo "${TRIMOPTS}" | envsubst) \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch trimmomatic.done
@@ -406,8 +409,8 @@ if [ "${TRIM}" = "yes" ]; then
                 --extract \
                 --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
 		-a "${ADAPTERS}" \
-		"${SAMPLENM}_1P.fq.gz" \
-                "${SAMPLENM}_2P.fq.gz" \
+		"${SAMPLENM}_1P.fq" \
+                "${SAMPLENM}_2P.fq" \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch fastqc.trim.done
         else
@@ -416,7 +419,7 @@ if [ "${TRIM}" = "yes" ]; then
                 --extract \
                 --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
 		-a "${ADAPTERS}" \
-		"${SAMPLENM}_trimmed.fq.gz" \
+		"${SAMPLENM}_trimmed.fq" \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch fastqc.trim.done
         fi
@@ -456,8 +459,8 @@ if [ ! -f hisat2.done ]; then
             hisat2 \
                 ${HISAT2OPTS} \
                 -x "${HISAT2INDEX}" \
-                -1 <(gzip -cd "${SAMPLENM}_1P.fq.gz" || cat "${SAMPLENM}_1P.fq") \
-                -2 <(gzip -cd "${SAMPLENM}_2P.fq.gz" || cat "${SAMPLENM}_2P.fq") \
+                -1 "${SAMPLENM}_1P.fq" \
+                -2 "${SAMPLENM}_2P.fq" \
                 2> alignment.summary \
                 | samtools view -hb -o "${SAMPLENM}.bam" - \
                 && touch hisat2.done \
@@ -467,7 +470,7 @@ if [ ! -f hisat2.done ]; then
             hisat2 \
                 ${HISAT2OPTS} \
                 -x "${HISAT2INDEX}" \
-                -U <(gzip -cd "${SAMPLENM}_trimmed.fq.gz" || cat "${SAMPLENM}_trimmed.fq.gz") \
+                -U "${SAMPLENM}_trimmed.fq" \
                 2> alignment.summary \
                 | samtools view -hb -o "${SAMPLENM}.bam" - \
                 && touch hisat2.done \
