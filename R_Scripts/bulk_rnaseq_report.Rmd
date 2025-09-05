@@ -1450,7 +1450,7 @@ if(large_dataset) {
             "top",
             c("Uniquely Mapped", "Multiply Mapped", "Discordantly Mapped", "Unmapped"),
             fill=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-            ncol=4,
+            ncol=2,
             cex=0.7)
         cat("\n\n")
     }
@@ -1474,7 +1474,7 @@ if(large_dataset) {
             "top",
             c("Uniquely Mapped", "Multiply Mapped", "Discordantly Mapped", "Unmapped"),
             fill=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-            ncol=4,
+            ncol=2,
             cex=0.7)
 }
 ```
@@ -1509,14 +1509,14 @@ if(large_dataset) {
     for(i in unique(chunks)) {
         idx <- which(chunks == i)
         cat("###### Samples ", idx[1], " to ", idx[length(idx)], "\n")
-        subdat <- prop_dat[idx,,drop=FALSE]
+        subdat <- count_dat[idx,,drop=FALSE]
         at <- barplot(
-            t(subdat),
+            t(subdat)/1000000,
             beside=FALSE,
             col=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-            ylim=c(0, 1.2),
-            ylab="Proportion",
-            main="HISAT2 Proportion Plot",
+            ylim=c(0, max_reads*1.2),
+            ylab="Fragment Count (Millions)",
+            main="HISAT2 Count Plot",
             axes=FALSE)
         axis(side=2)
         axis(
@@ -1529,18 +1529,18 @@ if(large_dataset) {
             "top",
             c("Uniquely Mapped", "Multiply Mapped", "Discordantly Mapped", "Unmapped"),
             fill=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-            ncol=4,
+            ncol=2,
             cex=0.7)
         cat("\n\n")
     }
 } else {
     at <- barplot(
-        t(prop_dat),
+        t(count_dat)/1000000,
         beside=FALSE,
         col=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-        ylim=c(0, 1.2),
-        ylab="Proportion",
-        main="HISAT2 Proportion Plot",
+        ylim=c(0, max_reads*1.2),
+        ylab="Fragment Count (Millions)",
+        main="HISAT2 Count Plot",
         axes=FALSE)
         axis(side=2)
         axis(
@@ -1553,7 +1553,7 @@ if(large_dataset) {
             "top",
             c("Uniquely Mapped", "Multiply Mapped", "Discordantly Mapped", "Unmapped"),
             fill=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-            ncol=4,
+            ncol=2,
             cex=0.7)
 }
 ```
