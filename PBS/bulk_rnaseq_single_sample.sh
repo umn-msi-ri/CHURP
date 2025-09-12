@@ -596,19 +596,38 @@ if [ ! -f coord_sort.done ]; then
         "${TO_FLT}" \
         2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}"
     echo "# ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID} $(date '+%F %T'): Indexing coordinate-sorted BAM files." >> "${LOG_FNAME}"
-    samtools index "${SAMPLENM}_MAPQFiltered_CoordSort.bam"
-    samtools index "${SAMPLENM}_Raw_CoordSort.bam"
-    touch coord_sort.done
+   
+	# Set these variables for linking at the end of the script
+	FOR_COUNTS="${SAMPLENM}_MAPQFiltered.bam"
+	RAW_COORD="${SAMPLENM}_Raw_CoordSort.bam"
+	FLT_COORD="${SAMPLENM}_MAPQFiltered_CoordSort.bam"
+
+	# need to use csi index option if genome is bigger than 512mb 536870912 is bytes
+	MAX_SIZE="$(samtools idxstats ${RAW_COORD} | cut -f 2 | sort -n | tail -n1)"
+
+	if [[ "${MAX_SIZE}" -gt 536870911 ]]; then
+		echo "# largest reference size is ${MAX_SIZE} using csi index" >> "${LOG_FNAME}"
+		# csi for large genomes
+    	samtools index -c "${SAMPLENM}_MAPQFiltered_CoordSort.bam"
+    	samtools index -c "${SAMPLENM}_Raw_CoordSort.bam"
+    	# Set these variables for linking at the end of the script
+    	RAW_COORD_IDX="${SAMPLENM}_Raw_CoordSort.bam.csi"
+		FLT_COORD_IDX="${SAMPLENM}_MAPQFiltered_CoordSort.bam.csi"
+		touch coord_sort.done
+	else
+		echo "# largest reference size is ${MAX_SIZE} using bai index" >> "${LOG_FNAME}"
+		# bai default
+    	samtools index "${SAMPLENM}_MAPQFiltered_CoordSort.bam"
+    	samtools index "${SAMPLENM}_Raw_CoordSort.bam"
+    	# Set these variables for linking at the end of the script
+    	RAW_COORD_IDX="${SAMPLENM}_Raw_CoordSort.bam.bai"
+		FLT_COORD_IDX="${SAMPLENM}_MAPQFiltered_CoordSort.bam.bai"
+		touch coord_sort.done
+	fi
 else
     echo "# ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID} $(date '+%F %T'): Found sorted and indexed BAM files." >> "${LOG_FNAME}"
+    touch coord_sort.done
 fi
-
-# Set these variables for linking at the end of the script
-FOR_COUNTS="${SAMPLENM}_MAPQFiltered.bam"
-RAW_COORD="${SAMPLENM}_Raw_CoordSort.bam"
-RAW_COORD_IDX="${SAMPLENM}_Raw_CoordSort.bam.bai"
-FLT_COORD="${SAMPLENM}_MAPQFiltered_CoordSort.bam"
-FLT_COORD_IDX="${SAMPLENM}_MAPQFiltered_CoordSort.bam.bai"
 
 # Generate some stats on the raw BAM for the report
 echo "# $(date '+%F %T'): Finished section ${LOG_SECTION}" >> /dev/stderr
