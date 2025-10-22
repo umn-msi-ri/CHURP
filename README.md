@@ -1,6 +1,10 @@
 # CHURP
 This repository contains the **C**ollection of **H**ierarchical **U**MII-**R**IS **P**ipelines (CHURP).
 
+## Tutorial for Analyzing Bulk RNA-seq data with CHURP
+
+https://z.umn.edu/ris-rnaseq
+
 ## Citing CHURP
 If you use CHURP in your research, please cite our paper from Practice and Experience in Advanced Research Computing (PEARC) 2019:
 
