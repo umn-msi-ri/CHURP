@@ -1806,7 +1806,7 @@ samples, but do not compare CPM values for different genes in the same
 sample.
 
 ```{r cpm_summary, echo=FALSE, message=FALSE, out.width="750", out.height="750"}
-cpm_plot <- paste(params["outdir"], "Plots", "cpm_plot.pdf", sep="/")
+cpm_plot <- paste(params["outdir"], "Plots", "cpm_plot.png", sep="/")
 # Include as graphics
 knitr::include_graphics(cpm_plot)
 ```
@@ -1818,7 +1818,7 @@ sequenced samples. The 500 genes with the highest variance in expression
 were used to generate the following heatmap:
 
 ```{r var_hmp, echo=FALSE, message=FALSE, out.width="750", out.height="750"}
-heatmap_plot <- paste(params["outdir"], "Plots", "high_variance_heatmap.pdf", sep="/")
+heatmap_plot <- paste(params["outdir"], "Plots", "high_variance_heatmap.png", sep="/")
 knitr::include_graphics(heatmap_plot)
 ```
 
@@ -1828,7 +1828,7 @@ CPM values were then used to generate a multidimensional scaling (MDS)
 plot, which functions similarly to a principal components plot:
 
 ```{r mds_plot, echo=FALSE, message=FALSE, out.width="750", out.height="750"}
-mds_plot <- paste(params["outdir"], "Plots", "mds_plot.pdf", sep="/")
+mds_plot <- paste(params["outdir"], "Plots", "mds_plot.png", sep="/")
 knitr::include_graphics(mds_plot)
 ```
 
@@ -2013,7 +2013,7 @@ service units. The following directories are of interest:
 
 -   `r paste(params["outdir"], "Plots", sep="/")`
 
-    Contains PDF vector images of DEG testing summary plots. The plots
+    Contains png vector images of DEG testing summary plots. The plots
     are also embedded into the "Counts Summaries" subsection of the
     "Alignment Summaries" section of this report.
 

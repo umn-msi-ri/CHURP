@@ -108,14 +108,35 @@ class BulkRNASeqSampleSheet(SampleSheet.Samplesheet):
         else:
             self.sheet_logger.debug('Parsing %s for groups.', groups)
             # load the group sheet (the first sheet) from the xlsx
-            groups_sheet = pd.read_excel(groups, 
-                                         sheet_name = 0, 
-                                         keep_default_na = False)
-            # convert the pandas df to a dict for set tests 
+            # --- Determine file type and load appropriately ---
+            ext = os.path.splitext(groups)[-1].lower()
+            try:
+                if ext in ['.xlsx', '.xls']:
+                    groups_sheet = pd.read_excel(groups, sheet_name=0, keep_default_na=False)
+                elif ext in ['.csv', '.tsv']:
+                    sep = '\t' if ext == '.tsv' else ','
+                    groups_sheet = pd.read_csv(groups, sep=sep, keep_default_na=False)
+                else:
+                    self.sheet_logger.error("Unsupported file type for groups: %s", ext)
+                    raise ValueError(f"Unsupported file type: {ext}")
+            except Exception as e:
+                self.sheet_logger.error("Error loading groups file: %s", e)
+                raise
+
+            # --- Convert to dict for lookups ---
+            if 'SampleName' not in groups_sheet.columns or 'Group' not in groups_sheet.columns:
+                self.sheet_logger.error(
+                    "Groups file must contain 'SampleName' and 'Group' columns."
+                )
+                raise ValueError("Missing required columns in groups file.")
+
             csv_gps = groups_sheet.set_index('SampleName')['Group'].to_dict()
+
             self.sheet_logger.debug(
-                'CSV experimental groups:\n%s',
-                pprint.pformat(csv_gps))
+                'Parsed experimental groups:\n%s',
+                pprint.pformat(csv_gps)
+            )
+
             # Calculate the overlaps
             fq_samples = set(self.samples)
             csv_samples = set(csv_gps)

@@ -39,33 +39,56 @@ setwd(work_dir)
 # Get the sample sheet to grab group membership downstream 
 sample_sheet <- read.table(samp_sheet, sep = "|", header = F, comment.char = "#")
 
-# parse the excel spreadsheet. The first sheet has group (and batch)
+# parse the group sheet. The first sheet has group (and batch)
 # information. The second sheet, if present, has DEG testing contrast information.
 # the file itself should always exist, because it is tested for earlier. However,
 # there hasn't yet been a test for the DEG groups (sheet 2), so here we'll pay
 # careful attention to that.
-group_sheet <- readxl::read_excel(group_sheet_loc,
-                                  sheet =1)
-comparison_sheet <- tryCatch({
-  readxl::read_excel(group_sheet_loc,
-                     sheet =2)
-}, 
-error = function(e){
-  NULL
-}
-)
-if (is.null(comparison_sheet) || nrow(comparison_sheet) == 0){
+
+# Determine file type
+file_ext <- tools::file_ext(group_sheet_loc)
+
+if (tolower(file_ext) %in% c("xls", "xlsx")) {
+  # ---- Excel input ----
+  
+  # Sheet 1: group info
+  group_sheet <- readxl::read_excel(group_sheet_loc, sheet = 1)
+  
+  # Sheet 2: contrasts (optional)
+  comparison_sheet <- tryCatch(
+    readxl::read_excel(group_sheet_loc, sheet = 2),
+    error = function(e) NULL
+  )
+  
+  if (is.null(comparison_sheet) || nrow(comparison_sheet) == 0) {
+    write(
+      paste0("No contrasts found in sheet 2 of ",
+             basename(group_sheet_loc),
+             ", will not perform DEG testing."),
+      stderr()
+    )
+    do_deg <- FALSE
+  } else {
+    do_deg <- TRUE
+  }
+  
+} else if (tolower(file_ext) == "csv") {
+  # ---- CSV input ----
+  
+  group_sheet <- read.csv(group_sheet_loc, header = TRUE, stringsAsFactors = FALSE)
+  comparison_sheet <- NULL
+  
   write(
-    paste0("No contrasts found in sheet 2 of ",
-           basename(group_sheet_loc),
-           ", will not perform DEG testing."),
+    paste0("CSV detected (", basename(group_sheet_loc), 
+           "); skipping DEG contrast sheet."),
     stderr()
   )
-  do_deg = FALSE
-}else{
-  do_deg = TRUE
+  
+  do_deg <- FALSE
+  
+} else {
+  stop("Unsupported file type: ", file_ext)
 }
-
 
 # Because there may be cases where a subset of individuals in the samplesheet are run. We'll pull in the featureCounts matrix early and grab the relevant IDs
 raw_mat <- read.table(fc_mat, header = T, sep = '\t', comment.char = '#')
@@ -106,10 +129,10 @@ if (length(true_groups[which(table(true_groups) < 3)]) > 0){
 }
 
 # Set filename variables
-mds_plot <- paste(out_dir, "Plots/mds_plot.pdf", sep = "/")
-counts_plot <- paste(out_dir, "Plots/cpm_plot.pdf", sep = "/")
+mds_plot <- paste(out_dir, "Plots/mds_plot.png", sep = "/")
+counts_plot <- paste(out_dir, "Plots/cpm_plot.png", sep = "/")
 counts_list <- paste(out_dir, "Counts/cpm_list.txt", sep = "/")
-hmap <- paste(out_dir, "Plots/high_variance_heatmap.pdf", sep = "/")
+hmap <- paste(out_dir, "Plots/high_variance_heatmap.png", sep = "/")
 
 # Filter out genes that are below the length threshold
 raw_mat <- raw_mat[which(raw_mat$Length >= min_len),]
@@ -125,31 +148,25 @@ if (any(lib_sizes == 0)){
   quit(status = 1, save = "no")
 }
 
-# Convert the raw matrix into a DGE object. Column 1 is Geneid, columns 7+ are the sample counts. The groups list  is generated above. 
+# Convert the raw matrix into a DGE object
 edge_mat <- DGEList(counts = raw_mat[,seq(-1,-6)], genes = raw_mat[,1], group = groups)
 
 ############################
-# Generate descriptive accounts of the data (MDS, Normalized Counts, Counts Distributions, and a Heatmap) 
-# Note that we DO NOT apply the minimum count filters prior to these descriptive summaries.
+# Generate descriptive accounts of the data (MDS, Normalized Counts, Counts Distributions, and a Heatmap)
 ############################
 
-# This is THE ONLY colorblind acceptable palette with 4 colors from colorbrewer: http://colorbrewer2.org/#type=qualitative&scheme=Paired&n=4
+# Define color palette
 if(length(uniq_groups) > 8) {
-    write("There are more than eight groups, so all groups will be colored dark blue. We plot a maximum of eight colors for colorblindness considerations.", stderr())
+    write("There are more than eight groups, so all groups will be colored dark blue.", stderr())
     pal <- rep("navy", length.out=length(uniq_groups))
 } else {
-  # Colorblind friendly palette
   pal <- c("#5330A0","#F21245","#1E88E5","#FFC107",
            "#7AF3DE","#81C5E6","#004D40","#A43CB3")
 }
-col_vec <- pal[match(groups,uniq_groups)]
+col_vec <- pal[match(groups, uniq_groups)]
 
-# legend code adapted from https://support.bioconductor.org/p/101530/
-# Set the MDS plot pdf and write the plot
-pdf(mds_plot)
-# If there are fewer than 3 samples, we still want to write a PDF for the MDS,
-# but we can't actually generate an MDS plot. The edgeR function dies with
-# less than 3 samples
+# ---- MDS Plot ----
+png(mds_plot, width = 1200, height = 1000, res = 150)
 if(length(samp_ids) < 3) {
   plot(c(0, 1), c(0, 1), ann=F, bty="n", type="n", xaxt="n", yaxt="n")
   text(x=0.5, y=0.5, "Less than 3 samples;\nMDS not possible", cex=1, col="black")
@@ -160,12 +177,10 @@ if(length(samp_ids) < 3) {
   opar <- par(no.readonly = TRUE)
   par(xpd = TRUE, mar = par()$mar + c(0, 0, 0, 5))
   plotMDS(edge_mat, cex = 0.75, col = col_vec, bg= col_vec, pch = pch_vec)
-  # we do this to get the x,y locs, because we can't plot labels and points in a single plotMDS call
   xy <- as.data.frame(plotMDS(edge_mat, cex = 0.75, plot = FALSE))
   text(xy$x, xy$y, label = row.names(xy), pos = 1, cex = 0.5)
   legend(par("usr")[2], mean(par("usr")[3:4])+.25, legend = c('Group', uniq_groups), text.col = c('black', unique(col_vec)), bty = "n")
   legend(par("usr")[2], mean(par("usr")[3:4])-.25, legend = c(batch_name, uniq_batches), pch = c(26, unique(pch_vec)), bty = "n")
-  
   par(opar)
 } else {
   opar <- par(no.readonly = TRUE)
@@ -176,20 +191,14 @@ if(length(samp_ids) < 3) {
 }
 dev.off()
 
-
-# Set a variable holding the log2(1+CPM) counts.
+# ---- CPM Violin Plot ----
 cpm_counts <- cpm(edge_mat, log = T, prior.count = 1)
-
-# Create a dataframe of cpm_counts and gene IDs in 'wide' format. Melt into 'long' format for ggplot
 cdf <- data.frame(edge_mat$genes, cpm_counts)
 write.table(cdf, file = counts_list, sep = '\t', quote = FALSE, row.names = FALSE)
 tidy_cdf <- melt(cdf, id.vars = "genes", variable.name = "sample_id", value.name = "per_feature_count")
-
-# manually add group information to tidy_cdf
 tidy_cdf$group <- factor(rep(uniq_groups[match(groups,uniq_groups)], each = nrow(edge_mat$genes)))
 
-# Set the counts plot pdf and write the violin plot of normalized counts per sample
-pdf(counts_plot)
+png(counts_plot, width = 1200, height = 1000, res = 150)
 p <- ggplot(tidy_cdf, aes(x = sample_id, y = per_feature_count, fill = group)) + 
   geom_violin(trim = F) + 
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1, size = 7)) + 
@@ -197,51 +206,38 @@ p <- ggplot(tidy_cdf, aes(x = sample_id, y = per_feature_count, fill = group)) +
 p + labs(x = "Sample ID", y = "Feature count -- log(1+cpm)", fill = "Group")
 dev.off()
 
-
-# Calculate count variance across samples and select the top 500 variance features.
-#cpm_counts <- cpm(edge_mat, log = T, prior.count = 1)
-# For some reason, sometimes there are fewer than 500 genes that pass filtering
+# ---- Heatmap ----
 n_genes <- min(500, nrow(cpm_counts))
 if(n_genes < 500) {
-  write("There are fewer than 500 genes that pass variance filtering for the clustering heatmap. This is not an error, but you should be aware of it.", stderr())
+  write("There are fewer than 500 genes that pass variance filtering.", stderr())
 }
 if(length(samp_ids) == 1) {
-  write("There is only one sample, so we will not try to generate a clustering heatmap. This is not an error.", stderr())
-  pdf(hmap)
+  write("There is only one sample; skipping heatmap.", stderr())
+  png(hmap, width = 1200, height = 1000, res = 150)
   plot(c(0, 1), c(0, 1), ann=F, bty="n", type="n", xaxt="n", yaxt="n")
   text(x=0.5, y=0.5, "1 sample;\nClustering heatmap not possible", cex=1, col="black")
   dev.off()
 } else {
   gene_var <- apply(cpm_counts, 1, var)
-  # Need to run a check here to see that they are not all 0 variance
   if(all(gene_var == 0)) {
-    write("All genes have 0 variance, so we will not try to generate a clustering heatmap. This is not an error.", stderr())
-    pdf(hmap)
+    write("All genes have 0 variance; skipping heatmap.", stderr())
+    png(hmap, width = 1200, height = 1000, res = 150)
     plot(c(0, 1), c(0, 1), ann=F, bty="n", type="n", xaxt="n", yaxt="n")
-    text(x=0.5, y=0.5, "All genes have 0 variance in expression;\nClustering heatmap not possible", cex=1, col="black")
+    text(x=0.5, y=0.5, "All genes have 0 variance;\nClustering heatmap not possible", cex=1, col="black")
     dev.off()
   } else {
     select_var <- names(sort(gene_var, decreasing=TRUE))[1:n_genes]
     high_var <- cpm_counts[select_var,]
-    # Set the heatmap pdf and plot the normalized counts heatmap
-    pdf(hmap)
-    # different cases for when there are group variables or not
+    png(hmap, width = 1200, height = 1000, res = 150)
     if (n_true_groups > 0){
-      # pheatmap uses a dataframe for variable annotation where the rownames match the matrix samplenames
       annotation <- as.data.frame(group_sheet)
       row.names(annotation) <- make.names(group_sheet$SampleName)
       annotation[,1] <- NULL
-      # to specify annotation colors for pheatmap, use a named list with named color vector
-      colors <- col_vec
-      colors <- unique(colors)
-      # A quick fix - if the length of the color vector is 1, then we
-      # either have 1 group or >4 groups. We will overwrite the color
-      # vector in this case
+      colors <- unique(col_vec)
       if(length(colors) == 1) {
         colors <- rep(colors, length(unique(annotation[,1])))
       }
       names(colors) <- unique(annotation[,1])
-      
       color_list <- list()
       color_list[[colnames(annotation)[1]]] <- colors
       pheatmap::pheatmap(high_var,
@@ -257,6 +253,7 @@ if(length(samp_ids) == 1) {
     dev.off()
   }
 }
+
 ############################
 # Differential expression testing and summaries
 ############################
@@ -293,6 +290,7 @@ filter_low_expression <- function(gene_row, min_expr, min_samples) {
         return(FALSE)
     }
 }
+
 keep <- apply(
     cpm(edge_mat, normalized=TRUE, log=FALSE),
     1,
@@ -337,4 +335,3 @@ for (i in 1:dim(comparison_sheet)[1]){
     write(paste0("Missing a group in Comparison: ",comparison,". A Reference and/or Test group does not match the groups listed in the Sample Sheet. Check the spelling of the group names to make sure that they match. "), stderr())
   }
 }
-
