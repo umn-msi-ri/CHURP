@@ -92,7 +92,7 @@ if (tolower(file_ext) %in% c("xls", "xlsx")) {
 
 # Because there may be cases where a subset of individuals in the samplesheet are run. We'll pull in the featureCounts matrix early and grab the relevant IDs
 raw_mat <- read.table(fc_mat, header = T, sep = '\t', comment.char = '#')
-samp_ids <- names(raw_mat)[-(1:6)]
+samp_ids <- make.names(names(raw_mat)[-(1:6)])
 sample_sheet <- sample_sheet[make.names(sample_sheet$V1) %in% samp_ids,]
 group_sheet <- group_sheet[make.names(group_sheet$SampleName) %in% samp_ids,]
 group_sheet <- group_sheet[match(samp_ids, make.names(group_sheet$SampleName)),]
@@ -319,9 +319,9 @@ fit <- glmQLFit(edge_mat, design)
 # present within the edgeR sample groups. If not, skip testing for that comparison.
 for (i in 1:dim(comparison_sheet)[1]){
   # check if the groups in the comparison match what is present in the sample sheet
-  comparison <- comparison_sheet$Comparison_Name[i]
-  ref_group <- comparison_sheet$Reference_Group[i]
-  test_group <- comparison_sheet$Test_Group[i]
+  comparison <- make.names(comparison_sheet$Comparison_Name[i])
+  ref_group <- make.names(comparison_sheet$Reference_Group[i])
+  test_group <- make.names(comparison_sheet$Test_Group[i])
   if (ref_group %in% true_groups & test_group %in% true_groups){
     comp <- paste0("group",test_group,"-group",ref_group)
     comp_var <- makeContrasts(comp, levels = design)
