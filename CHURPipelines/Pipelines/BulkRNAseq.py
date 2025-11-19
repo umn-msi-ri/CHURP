@@ -502,7 +502,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
         handle.write('    exit 99\n')
         handle.write('fi\n')
         # Make two versions of the summary command: one with the single sample
-        # array dependency and one without
+        # array dependency and one without for summary only jobs.
         summary_cmd_dep = [
             'sbatch',
             '--parsable',
@@ -518,7 +518,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
             '--tmp=' + str(self.tmp_space) + 'mb',
             '-n', '1',
             '-c', str(self.ppn),
-            '--time=' + str(60),
+            '--time=60',
             '--depend=afterok:${single_id}',
             '--export=' + summary_vars,
             self.summary_script,
