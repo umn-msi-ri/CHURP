@@ -380,7 +380,7 @@ if [ "${TRIM}" = "yes" ]; then
                 -threads "${TRIMTHREADS}" \
 		-phred33 \
                 "${R1FILE}" "${R2FILE}" \
-                "${SAMPLENM}_1P.fq" "${SAMPLENM}_1U.fq" "${SAMPLENM}_2P.fq" "${SAMPLENM}_2U.fq" \
+                "${SAMPLENM}_1P.fq.gz" "${SAMPLENM}_1U.fq.gz" "${SAMPLENM}_2P.fq.gz" "${SAMPLENM}_2U.fq.gz" \
                 $(echo "${TRIMOPTS}" | envsubst) \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch trimmomatic.done
@@ -391,7 +391,7 @@ if [ "${TRIM}" = "yes" ]; then
                 -threads "${TRIMTHREADS}" \
                 -phred33 \
 		"${R1FILE}" \
-                "${SAMPLENM}_trimmed.fq" \
+                "${SAMPLENM}_trimmed.fq.gz" \
                 $(echo "${TRIMOPTS}" | envsubst) \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch trimmomatic.done
@@ -409,8 +409,8 @@ if [ "${TRIM}" = "yes" ]; then
                 --extract \
                 --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
 		-a "${ADAPTERS}" \
-		"${SAMPLENM}_1P.fq" \
-                "${SAMPLENM}_2P.fq" \
+		"${SAMPLENM}_1P.fq.gz" \
+                "${SAMPLENM}_2P.fq.gz" \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch fastqc.trim.done
         else
@@ -419,7 +419,7 @@ if [ "${TRIM}" = "yes" ]; then
                 --extract \
                 --outdir="${WORKDIR}/singlesamples/${SAMPLENM}" \
 		-a "${ADAPTERS}" \
-		"${SAMPLENM}_trimmed.fq" \
+		"${SAMPLENM}_trimmed.fq.gz" \
                 2>> "${LOG_FNAME}" || pipeline_error "${LOG_SECTION}" \
                 && touch fastqc.trim.done
         fi
@@ -459,8 +459,8 @@ if [ ! -f hisat2.done ]; then
             hisat2 \
                 ${HISAT2OPTS} \
                 -x "${HISAT2INDEX}" \
-                -1 "${SAMPLENM}_1P.fq" \
-                -2 "${SAMPLENM}_2P.fq" \
+                -1 <(gzip -cd "${SAMPLENM}_1P.fq.gz" || cat "${SAMPLENM}_1P.fq") \
+                -2 <(gzip -cd "${SAMPLENM}_2P.fq.gz" || cat "${SAMPLENM}_2P.fq") \
                 2> alignment.summary \
                 | samtools view -hb -o "${SAMPLENM}.bam" - \
                 && touch hisat2.done \
@@ -470,7 +470,7 @@ if [ ! -f hisat2.done ]; then
             hisat2 \
                 ${HISAT2OPTS} \
                 -x "${HISAT2INDEX}" \
-                -U "${SAMPLENM}_trimmed.fq" \
+                -U <(gzip -cd "${SAMPLENM}_trimmed.fq.gz" || cat "${SAMPLENM}_trimmed.fq.gz") \
                 2> alignment.summary \
                 | samtools view -hb -o "${SAMPLENM}.bam" - \
                 && touch hisat2.done \
