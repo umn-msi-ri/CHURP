@@ -1450,7 +1450,7 @@ if(large_dataset) {
             "top",
             c("Uniquely Mapped", "Multiply Mapped", "Discordantly Mapped", "Unmapped"),
             fill=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-            ncol=4,
+            ncol=2,
             cex=0.7)
         cat("\n\n")
     }
@@ -1474,7 +1474,7 @@ if(large_dataset) {
             "top",
             c("Uniquely Mapped", "Multiply Mapped", "Discordantly Mapped", "Unmapped"),
             fill=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-            ncol=4,
+            ncol=2,
             cex=0.7)
 }
 ```
@@ -1529,7 +1529,7 @@ if(large_dataset) {
             "top",
             c("Uniquely Mapped", "Multiply Mapped", "Discordantly Mapped", "Unmapped"),
             fill=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-            ncol=4,
+            ncol=2,
             cex=0.7)
         cat("\n\n")
     }
@@ -1553,7 +1553,7 @@ if(large_dataset) {
             "top",
             c("Uniquely Mapped", "Multiply Mapped", "Discordantly Mapped", "Unmapped"),
             fill=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-            ncol=4,
+            ncol=2,
             cex=0.7)
 }
 ```
