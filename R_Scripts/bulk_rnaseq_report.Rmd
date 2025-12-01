@@ -1511,7 +1511,7 @@ if(large_dataset) {
         cat("###### Samples ", idx[1], " to ", idx[length(idx)], "\n")
         subdat <- prop_dat[idx,,drop=FALSE]
         at <- barplot(
-            t(subdat)/1000000,
+            t(subdat),
             beside=FALSE,
             col=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
             ylim=c(0, 1.2),
