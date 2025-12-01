@@ -1509,14 +1509,14 @@ if(large_dataset) {
     for(i in unique(chunks)) {
         idx <- which(chunks == i)
         cat("###### Samples ", idx[1], " to ", idx[length(idx)], "\n")
-        subdat <- count_dat[idx,,drop=FALSE]
+        subdat <- prop_dat[idx,,drop=FALSE]
         at <- barplot(
             t(subdat)/1000000,
             beside=FALSE,
             col=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-            ylim=c(0, max_reads*1.2),
-            ylab="Fragment Count (Millions)",
-            main="HISAT2 Count Plot",
+            ylim=c(0, 1.2),
+            ylab="Proportion",
+            main="HISAT2 Proportion Plot",
             axes=FALSE)
         axis(side=2)
         axis(
@@ -1535,12 +1535,12 @@ if(large_dataset) {
     }
 } else {
     at <- barplot(
-        t(count_dat)/1000000,
+        t(prop_dat),
         beside=FALSE,
         col=c("#1f78b4", "#a6cee3", "#b2df8a", "#999999"),
-        ylim=c(0, max_reads*1.2),
-        ylab="Fragment Count (Millions)",
-        main="HISAT2 Count Plot",
+        ylim=c(0, 1.2),
+        ylab="Proportion",
+        main="HISAT2 Proportion Plot",
         axes=FALSE)
         axis(side=2)
         axis(
