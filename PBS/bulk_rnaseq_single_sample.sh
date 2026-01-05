@@ -204,7 +204,6 @@ echo "##########################################################################
 echo "# $(date '+%F %T'): Analysis started for ${SAMPLENM}" >> "${LOG_FNAME}"
 echo "# $(date '+%F %T'): Job ID: ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}" >> "${LOG_FNAME}"
 
-
 # For future debugging, print which java we are using
 echo "# ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID} $(date '+%F %T'): Using $(which java)" >> "${LOG_FNAME}"
 
@@ -367,6 +366,10 @@ done
 echo "# $(date '+%F %T'): Finished section ${LOG_SECTION}" >> /dev/stderr
 LOG_SECTION="Trimmomatic"
 echo "# $(date '+%F %T'): Entering section ${LOG_SECTION}" >> /dev/stderr
+
+# capping threads for trimmomatic at 16
+TRIMTHREADS=$(( SLURM_CPUS_PER_TASK < 16 ? SLURM_CPUS_PER_TASK : 16 ))
+
 if [ "${TRIM}" = "yes" ]; then
     if [ ! -f trimmomatic.done ]; then
         if [ "${PE}" = "true" ]
@@ -374,7 +377,7 @@ if [ "${TRIM}" = "yes" ]; then
             echo "# ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID} $(date '+%F %T'): Running trimmomatic on ${R1FILE} and ${R2FILE}." >> "${LOG_FNAME}"
             trimmomatic \
                 PE \
-                -threads "${SLURM_CPUS_PER_TASK}" \
+                -threads "${TRIMTHREADS}" \
 		-phred33 \
                 "${R1FILE}" "${R2FILE}" \
                 "${SAMPLENM}_1P.fq.gz" "${SAMPLENM}_1U.fq.gz" "${SAMPLENM}_2P.fq.gz" "${SAMPLENM}_2U.fq.gz" \
@@ -385,7 +388,7 @@ if [ "${TRIM}" = "yes" ]; then
             echo "# ${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID} $(date '+%F %T'): Running trimmomatic on ${R1FILE}." >> "${LOG_FNAME}"
             trimmomatic \
                 SE \
-                -threads "${SLURM_CPUS_PER_TASK}" \
+                -threads "${TRIMTHREADS}" \
                 -phred33 \
 		"${R1FILE}" \
                 "${SAMPLENM}_trimmed.fq.gz" \
