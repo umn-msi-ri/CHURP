@@ -1805,7 +1805,7 @@ like FPKM, however. You can compare CPM values for the same gene across
 samples, but do not compare CPM values for different genes in the same
 sample.
 
-```{r cpm_summary, echo=FALSE, message=FALSE, out.width="750", out.height="750"}
+```{r cpm_summary, echo=FALSE, message=FALSE, out.width="75%", out.height="75%"}
 cpm_plot <- paste(params["outdir"], "Plots", "cpm_plot.png", sep="/")
 # Include as graphics
 knitr::include_graphics(cpm_plot)
@@ -1817,7 +1817,7 @@ We then calculated the variance in CPM values for each gene across the
 sequenced samples. The 500 genes with the highest variance in expression
 were used to generate the following heatmap:
 
-```{r var_hmp, echo=FALSE, message=FALSE, out.width="750", out.height="750"}
+```{r var_hmp, echo=FALSE, message=FALSE, out.width="75%", out.height="75%"}
 heatmap_plot <- paste(params["outdir"], "Plots", "high_variance_heatmap.png", sep="/")
 knitr::include_graphics(heatmap_plot)
 ```
@@ -1827,7 +1827,7 @@ knitr::include_graphics(heatmap_plot)
 CPM values were then used to generate a multidimensional scaling (MDS)
 plot, which functions similarly to a principal components plot:
 
-```{r mds_plot, echo=FALSE, message=FALSE, out.width="750", out.height="750"}
+```{r mds_plot, echo=FALSE, message=FALSE, out.width="75%", out.height="75%"}
 mds_plot <- paste(params["outdir"], "Plots", "mds_plot.png", sep="/")
 knitr::include_graphics(mds_plot)
 ```

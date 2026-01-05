@@ -148,14 +148,16 @@ if (any(lib_sizes == 0)){
   quit(status = 1, save = "no")
 }
 
-# Convert the raw matrix into a DGE object
+# Convert the raw matrix into a DGE object.
+# Column 1 is Geneid, columns 7+ are the counts
 edge_mat <- DGEList(counts = raw_mat[,seq(-1,-6)], genes = raw_mat[,1], group = groups)
 
 ############################
 # Generate descriptive accounts of the data (MDS, Normalized Counts, Counts Distributions, and a Heatmap)
+# Minimum count filters are not applied yet.
 ############################
 
-# Define color palette
+# Define color palette (see http://colorbrewer2.org/#type=qualitative&scheme=Paired&n=4)
 if(length(uniq_groups) > 8) {
     write("There are more than eight groups, so all groups will be colored dark blue.", stderr())
     pal <- rep("navy", length.out=length(uniq_groups))
@@ -166,7 +168,7 @@ if(length(uniq_groups) > 8) {
 col_vec <- pal[match(groups, uniq_groups)]
 
 # ---- MDS Plot ----
-png(mds_plot, width = 1200, height = 1000, res = 150)
+png(mds_plot, width = 6, height = 6, units="in", res = 300)
 if(length(samp_ids) < 3) {
   plot(c(0, 1), c(0, 1), ann=F, bty="n", type="n", xaxt="n", yaxt="n")
   text(x=0.5, y=0.5, "Less than 3 samples;\nMDS not possible", cex=1, col="black")
@@ -177,6 +179,7 @@ if(length(samp_ids) < 3) {
   opar <- par(no.readonly = TRUE)
   par(xpd = TRUE, mar = par()$mar + c(0, 0, 0, 5))
   plotMDS(edge_mat, cex = 0.75, col = col_vec, bg= col_vec, pch = pch_vec)
+  # xy is created for positions, because plotMDS won't allow plotting both labels and points
   xy <- as.data.frame(plotMDS(edge_mat, cex = 0.75, plot = FALSE))
   text(xy$x, xy$y, label = row.names(xy), pos = 1, cex = 0.5)
   legend(par("usr")[2], mean(par("usr")[3:4])+.25, legend = c('Group', uniq_groups), text.col = c('black', unique(col_vec)), bty = "n")
@@ -192,13 +195,15 @@ if(length(samp_ids) < 3) {
 dev.off()
 
 # ---- CPM Violin Plot ----
+
 cpm_counts <- cpm(edge_mat, log = T, prior.count = 1)
 cdf <- data.frame(edge_mat$genes, cpm_counts)
 write.table(cdf, file = counts_list, sep = '\t', quote = FALSE, row.names = FALSE)
 tidy_cdf <- melt(cdf, id.vars = "genes", variable.name = "sample_id", value.name = "per_feature_count")
 tidy_cdf$group <- factor(rep(uniq_groups[match(groups,uniq_groups)], each = nrow(edge_mat$genes)))
 
-png(counts_plot, width = 1200, height = 1000, res = 150)
+png(counts_plot, width = 6, height = 6, units="in", res = 300)
+
 p <- ggplot(tidy_cdf, aes(x = sample_id, y = per_feature_count, fill = group)) + 
   geom_violin(trim = F) + 
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1, size = 7)) + 
@@ -207,29 +212,32 @@ p + labs(x = "Sample ID", y = "Feature count -- log(1+cpm)", fill = "Group")
 dev.off()
 
 # ---- Heatmap ----
+
+# Select the top 500 variance features
 n_genes <- min(500, nrow(cpm_counts))
 if(n_genes < 500) {
   write("There are fewer than 500 genes that pass variance filtering.", stderr())
 }
 if(length(samp_ids) == 1) {
   write("There is only one sample; skipping heatmap.", stderr())
-  png(hmap, width = 1200, height = 1000, res = 150)
+  png(hmap, width = 8, height = 10, units="in", res = 300)
   plot(c(0, 1), c(0, 1), ann=F, bty="n", type="n", xaxt="n", yaxt="n")
   text(x=0.5, y=0.5, "1 sample;\nClustering heatmap not possible", cex=1, col="black")
   dev.off()
 } else {
   gene_var <- apply(cpm_counts, 1, var)
   if(all(gene_var == 0)) {
-    write("All genes have 0 variance; skipping heatmap.", stderr())
-    png(hmap, width = 1200, height = 1000, res = 150)
+    write("All genes have 0 variance; skipping heatmap. This is a warning, not an error.", stderr())
+    png(hmap, width = 8, height = 10, res = 300)
     plot(c(0, 1), c(0, 1), ann=F, bty="n", type="n", xaxt="n", yaxt="n")
     text(x=0.5, y=0.5, "All genes have 0 variance;\nClustering heatmap not possible", cex=1, col="black")
     dev.off()
   } else {
     select_var <- names(sort(gene_var, decreasing=TRUE))[1:n_genes]
     high_var <- cpm_counts[select_var,]
-    png(hmap, width = 1200, height = 1000, res = 150)
+    png(hmap, width = 8, height = 10, units="in", res = 300)
     if (n_true_groups > 0){
+      # create annotation dataframe if group information is available
       annotation <- as.data.frame(group_sheet)
       row.names(annotation) <- make.names(group_sheet$SampleName)
       annotation[,1] <- NULL
@@ -272,7 +280,7 @@ if (n_groups == 1){
 # Subset the data object to get rid of samples with a 'NULL' group
 edge_mat <- edge_mat[,edge_mat$samples$group %in% true_groups]
 
-# Filter out genes wtih low expression. We employ the following filtering
+# Filter out genes with low expression. We employ the following filtering
 # scheme, which is similar to what edgeR's `filterByExpr()` function does, but
 # with explicit statements:
 #   1: Calculate the median library size across all samples (C)

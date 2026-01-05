@@ -222,3 +222,4 @@ class BulkRNASeqSampleSheet(SampleSheet.Samplesheet):
             pprint.pformat(self.final_sheet))
         # Return the boolean list of PE/SE values. True=PE, False=SE
         return is_pe
+
