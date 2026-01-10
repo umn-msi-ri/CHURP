@@ -40,7 +40,7 @@ sheet <- read.table(
 # count summary
 sheet <- sheet[sheet$V1 %in% read_summary$V1,]
 
-# We are making a bold assumption here that the first sample is run against the
+# Assumes that the first sample is run against the
 # same genome as all the others. This is generally true, but if the user set
 # up multiple genomes, then they should hopefully know that and be able to
 # see that from the samplesheet. The genome is the 10th field, and the GTF is
@@ -111,7 +111,7 @@ if(large_dataset) {
         include.lowest=TRUE)
 }
 
-# Load the libraries we wil use here
+# Load the libraries we will use here
 library(knitr)
 ```
 
@@ -178,8 +178,11 @@ names(sumsheet) <- c(
     "Trim Options",
     "Strand")
 # Show only the name, group and file name
-#knitr::kable(sumsheet[,1:4])
-sumsheet[,1:4]
+# sumsheet[,1:4]
+           sumsheetshort <- kableExtra::kbl(sumsheet[,1:4],row.names = FALSE)
+           sumsheetshort <- kableExtra::kable_styling(sumsheetshort, bootstrap_options = c("striped", "hover", "responsive"))
+           sumsheetshort
+
 ```
 
 # Download and Save Important Files
@@ -293,8 +296,9 @@ names(read_summary) <- c(
     "Raw R2 Count",
     "Trimmed R1 Count",
     "Trimmed R2 Count")
-#knitr::kable(read_summary)
-read_summary
+    read_summary <- kableExtra::kbl(read_summary,row.names = FALSE)
+    read_summary <- kableExtra::kable_styling(read_summary, bootstrap_options = c("striped", "hover", "responsive"))
+    read_summary
 ```
 
 ### Insert Size Metrics {.tabset}
@@ -374,7 +378,9 @@ if(!file.exists(insertsize_file)) {
         "Width of 30% Bin",
         "Width of 70% Bin",
         "Width of 90% Bin")
-    
+
+    is_summary <- kableExtra::kbl(is_summary,row.names = FALSE)
+    is_summary <- kableExtra::kable_styling(is_summary, bootstrap_options = c("striped", "hover", "responsive"))
     is_summary
 ```
 
@@ -489,10 +495,9 @@ if(large_dataset) {
 Number of read pairs (from subsample) and percentage of library that is estimated to be
 derived from ribosomal RNA.
 ```{r bbduk_table, echo=FALSE, message=FALSE}
-bbduk_summary
-
-#knitr::kable(bbduk_summary,
-#    caption="Number of read pairs (from subsample) and percentage of library that is estim#ated to be derived from ribosomal RNA.")
+    bbduk_summary <- kableExtra::kbl(bbduk_summary,row.names = FALSE)
+    bbduk_summary <- kableExtra::kable_styling(bbduk_summary, bootstrap_options = c("striped", "hover", "responsive"))
+    bbduk_summary
 ```
 
 ### Basecall Quality {.tabset}
@@ -1408,7 +1413,9 @@ names(mapping_summary) <- c(
     "Max Read Length",
     "Average Read Length",
     "Average Read Quality")
-mapping_summary
+    mapping_summary <- kableExtra::kbl(mapping_summary,row.names = FALSE)
+    mapping_summary <- kableExtra::kable_styling(mapping_summary, bootstrap_options = c("striped", "hover", "responsive"))
+    mapping_summary
 ```
 
 **Note** that the `Reads Mapped` column shows **reads** and not
@@ -1491,10 +1498,9 @@ names(hisat_tab) <- c(
     "Uniquely Mapped",
     "Multiply Mapped",
     "Discordantly Mapped")
-hisat_tab
-
-# knitr::kable(hisat_tab,
-#     caption="Summary of alignment from HISAT2 based on fragment counts. Note that if the samples are paired-end, then each fragment is represented by 2 reads. If the samples are single-end, then each fragment is represented by 1 read.")
+    hisat_tab <- kableExtra::kbl(hisat_tab,row.names = FALSE)
+    hisat_tab <- kableExtra::kable_styling(hisat_tab, bootstrap_options = c("striped", "hover", "responsive"))
+    hisat_tab
 ```
 
 #### Proportion-Based Plots
@@ -1593,10 +1599,9 @@ names(hisat_prop) <- c(
     "Uniquely Mapped",
     "Multiply Mapped",
     "Discordantly Mapped")
-
+hisat_prop <- kableExtra::kbl(hisat_prop,row.names = FALSE)
+hisat_prop <- kableExtra::kable_styling(hisat_prop, bootstrap_options = c("striped", "hover", "responsive"))
 hisat_prop
-#knitr::kable(hisat_prop,
-#    caption="Summary of alignment from HISAT2 based on percentage of total reads. Note that if the samples are paired-end, then each fragment is represented by 2 reads. If the samples are single-end, then each fragment is represented by 1 read.")
 ```
 
 ### Feature Counts
@@ -1742,7 +1747,12 @@ samples <- colnames(subread_sum)[-c(1)]
 t_subread <- as.data.frame(t(subread_sum[,-c(1)]))
 rownames(t_subread) <- samples
 colnames(t_subread) <- hdr
+
+t_subread <- kableExtra::kbl(t_subread,row.names = FALSE)
+t_subread <- kableExtra::kable_styling(t_subread, bootstrap_options = c("striped", "hover", "responsive"))
+t_subread <- kableExtra::scroll_box(t_subread, width = "100%")
 t_subread
+
 ```
 
 #### Number of Expressed Features
@@ -1850,11 +1860,13 @@ are read out of the samplesheet:
 ```{r expr_groups, echo=FALSE, message=FALSE}
 sheet_sub <- sheet[,c(1, 2)]
 names(sheet_sub) <- c("Sample Name", "Group")
+
+sheet_sub <- kableExtra::kbl(sheet_sub,row.names = FALSE)
+sheet_sub <- kableExtra::kable_styling(sheet_sub, bootstrap_options = c("striped", "hover", "responsive"))
 sheet_sub
-#knitr::kable(sheet_sub)
 ```
 
-#### Results Summary
+#### Results Summary {.tabset}
 
 The top differentially expressed genes (DEGs) are given below.
 Comparisons were made based on the DEG Comparisons CSV or XLSX file
@@ -1891,12 +1903,14 @@ if(!dir.exists(degdir)) {
             } else {
                 lim <- 25
             }
-            print(
-                knitr::kable(
-                    d_g[1:lim,],
+            cat("##### ",gps, " \n")
+            cat("\n")
+            out <- kableExtra::kbl(
+                    d_g[1:lim,],row.names = FALSE,
                     caption=paste("Top DEGs at the 0.05 FDR for ", gps, sep="")
                     )
-                )
+            out <- kableExtra::kable_styling(out, bootstrap_options = c("striped", "hover", "responsive"))
+            print(out)
         }
     }
 }
