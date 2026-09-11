@@ -80,11 +80,15 @@ def add_args(ap):
     ap_opt.add_argument(
         '--expr-groups',
         '-e',
-        help=('Excel file from the "group_template" subcommand that contains '
-              'two sheets. The first sheet lists the sample names and the '
-              'groups to which they belong. The second sheet lists the '
-              'specific pairwise comparisons that are to be performed during '
-              'DEG testing. See the manual and tutorial for details.'),
+        help=('Name of group file (xlsx or csv). Use the group_template '
+              'subcommand to create this file. An xlsx file with two sheets '
+              'is required for DGE testing (the second sheet has pairwise '
+              'comparison information). If a csv is used, no DGE testing '
+              'can be performed because no second sheet is present. In '
+              'either case group labels will be used to distinguish between '
+              'experimental groups in plots. If neither file is provided then '
+              'there will be no DGE testing and all groups will be defined as '
+              'NULL in the report.'),
         default=None)
     ap_opt.add_argument(
         '--verbosity',
@@ -233,7 +237,7 @@ def add_args(ap):
         '-q',
         metavar='<Queue>',
         dest='msi_queue',
-        help=('Job queue to send the scheduler requests. Default "agsmall". '
+        help=('Job queue to send the scheduler requests. Default "msismall". '
               'Note that this is called "queue" for historical reasons - the '
               'equivalent term for Slurm is "partition."'),
         type=str,
@@ -241,9 +245,9 @@ def add_args(ap):
     ap_sched.add_argument(
         '--group',
         '-A',
-        metavar='<MSI group>',
+        metavar='<MSI project>',
         dest='pbs_group',
-        help='MSI group to charge for SU usage. Defaults to primary group.',
+        help='MSI PI project to charge for SU usage. Defaults to the user\'s primary project.',
         type=str,
         default=None)
     ap_sched.add_argument(

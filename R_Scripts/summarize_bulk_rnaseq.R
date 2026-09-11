@@ -90,8 +90,12 @@ if (tolower(file_ext) %in% c("xls", "xlsx")) {
   stop("Unsupported file type: ", file_ext)
 }
 
-# Because there may be cases where a subset of individuals in the samplesheet are run. We'll pull in the featureCounts matrix early and grab the relevant IDs
+# Because there may be cases where a subset of individuals in the samplesheet
+# are run. We'll pull in the featureCounts matrix early and grab the relevant IDs
+# IMPORTANT: we are not addressing leading numbers in sample names here, this will be handled later...
 raw_mat <- read.table(fc_mat, header = T, sep = '\t', comment.char = '#')
+
+
 samp_ids <- make.names(names(raw_mat)[-(1:6)])
 sample_sheet <- sample_sheet[make.names(sample_sheet$V1) %in% samp_ids,]
 group_sheet <- group_sheet[make.names(group_sheet$SampleName) %in% samp_ids,]
@@ -136,6 +140,11 @@ hmap <- paste(out_dir, "Plots/high_variance_heatmap.png", sep = "/")
 
 # Filter out genes that are below the length threshold
 raw_mat <- raw_mat[which(raw_mat$Length >= min_len),]
+
+# Fix the column names of raw_mat to remove the leading X values if there is a number immediately after it. We are gsubbing with a space.
+
+# remove the leading X in the names of raw_mat, but only if a number comes after it.
+names(raw_mat) <- gsub("^X(?=[0-9])","",names(raw_mat),perl=TRUE)
 
 # Check for any library sizes of zero and exit with 1 if found
 lib_sizes <- colSums(raw_mat[,seq(-1,-6)])
@@ -201,6 +210,9 @@ cdf <- data.frame(edge_mat$genes, cpm_counts)
 write.table(cdf, file = counts_list, sep = '\t', quote = FALSE, row.names = FALSE)
 tidy_cdf <- melt(cdf, id.vars = "genes", variable.name = "sample_id", value.name = "per_feature_count")
 tidy_cdf$group <- factor(rep(uniq_groups[match(groups,uniq_groups)], each = nrow(edge_mat$genes)))
+
+# fix the names with leading ^X[0-9] here in tidy_cdf
+tidy_cdf$sample_id <-  gsub("^X(?=[0-9])","",tidy_cdf$sample_id,perl=TRUE)
 
 png(counts_plot, width = 6, height = 6, units="in", res = 300)
 
