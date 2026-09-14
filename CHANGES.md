@@ -1,5 +1,25 @@
 # CHURP Changelog
-2025-07-10
+2026-09-14
+
+## [1.2.0] 2026-09-14
+Minor Improvements and Bug fixes.
+
+### Added
+- Both bai and csi indexes are now supported. A csi index will automatically be created based on genome size.
+- Both xlsx and csv files will work with the --expr-groups argument for bulk_rnaseq. DEG testing will only be performed with xlsx files. The use case for csv files is to label experimental groups in the Bulk RNASeq HTML report tables and plots. 
+
+### Modified
+- Updated genome_alias ensembl versions. We are now on ensembl release 115 or 62 depending on the genome.
+- Reduced walltime for summary job to 60 minutes, it was unnecessarily long previously.
+- Improved some minor table and plot legend formatting issues in the Rmarkdown HTML report.
+
+### Removed
+None.
+
+### Bugs Fixed
+- If too many threads are used for Trimmomatic then there are issues with gzip and file handles. We are now limiting Trimmomatic to a maximum of 16 processors, this limit is only applied to Trimmomatic. More processors can be used for other steps in the pipeline if appropriate.
+- png plots instead of pdf plots in the report for Safari browser compatibility.
+
 
 ## [1.1.0] 2025-07-10
 Minor and patch changes to CHURP and PURR. The --mem and --queue defaults will be added.

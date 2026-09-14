@@ -55,7 +55,7 @@ def add_args(ap):
         '-o',
         metavar='<output file>',
         dest='outfile',
-        help='Write the XLSX to this file. Defaults to ' + str(brnaseq_def_xlsx),
+        help='Name of output file. If a file type extension is included (e.g. csv or xlsx) that extension will be respected. An xlsx file is required for producing differential expression testing results with the CHURP bulk_rnaseq command, because the xlsx has a second sheet for DE testing comparisons. A csv file can be used with CHURP bulk_rnaseq to allow for group labels, but the csv cannot be used to get basic DE testing results. The default for this argument if no file name is provided will be the following xlsx file: ' + str(brnaseq_def_xlsx),
         default=brnaseq_def_xlsx)
     brnaseq_group_opt.add_argument(
         '--command-log',

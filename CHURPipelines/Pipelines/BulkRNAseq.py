@@ -275,65 +275,77 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
             DieGracefully.die_gracefully(DieGracefully.PE_SE_MIX, pe, se)
         ss_path = self.sheet.write_sheet(self.real_out, self.pipe_name, '|')
         return ss_path
-        
+ 
     def _validate_groupsheet(self, args):
-        # make a stub if one was not created.
-        # @return the args with accurate args['expr_groups'] 
+        """Validate or create an experimental group sheet."""
         if args['expr_groups'] is None:
             args['expr_groups'] = self._create_stub_groupsheet(args)
-        # Now do basic validation
+
         groups = args['expr_groups']
-        # throw an error if the expr_groups file is not an excel file 
-        if not groups[-4:] == "xlsx" and not groups[-3:] == "xls":
-            self.pipe_logger.error(
-                'A filetype different than an excel spreadsheet was '
-                'supplied for --expr_groups. You supplied a filetype '
-                f'end in {groups[-4:]}. Please replace this with an excel '
-                'spreadsheet in which the first sheet has two columns '
-                'titled "SampleName" and "Group"')
-            DieGracefully.die_gracefully(DieGracefully.BRNASEQ_NO_SAMP_GPS)                 
-        # load the group sheet (the first sheet) from the xlsx
-        groups_sheet = pd.read_excel(groups, 
-                                     sheet_name = 0, 
-                                     keep_default_na = False)
-        # throw an error if SampleName is not a header in the group sheet
-        if not 'SampleName' in groups_sheet:
-            self.pipe_logger.error(
-                'The xlsx experimental groups first sheet must have a '
-                'column named "SampleName"')
-            DieGracefully.die_gracefully(DieGracefully.BRNASEQ_NO_SAMP_GPS)   
-        # throw an error if Group is not a header in the group sheet
-        if not 'Group' in groups_sheet:
-            self.pipe_logger.error(
-                'The xlsx experimental groups first sheet must have a '
-                'column named "Group"')
+        ext = os.path.splitext(groups)[1].lower()
+
+        # --- Load file depending on type ---
+        try:
+            if ext in ['.xlsx', '.xls']:
+                groups_sheet = pd.read_excel(groups, sheet_name=0, keep_default_na=False)
+            elif ext == '.csv':
+                groups_sheet = pd.read_csv(groups, keep_default_na=False)
+            else:
+                self.pipe_logger.error(
+                    f'Unsupported file type for --expr_groups: "{ext}". '
+                    'Please provide a .xlsx, .xls, or .csv file.'
+                )
+                DieGracefully.die_gracefully(DieGracefully.BRNASEQ_NO_SAMP_GPS)
+                return args
+        except Exception as e:
+            self.pipe_logger.error(f'Failed to read group sheet ({groups}): {e}')
             DieGracefully.die_gracefully(DieGracefully.BRNASEQ_NO_SAMP_GPS)
+            return args
+
+        # --- Validate required columns ---
+        required_cols = ['SampleName', 'Group']
+        for col in required_cols:
+            if col not in groups_sheet.columns:
+                self.pipe_logger.error(
+                    f'The experimental groups file must have a column named "{col}" '
+                    f'(missing from {os.path.basename(groups)})'
+                )
+                DieGracefully.die_gracefully(DieGracefully.BRNASEQ_NO_SAMP_GPS)
+                return args
+
+        args['expr_groups_data'] = groups_sheet
         return args
 
     def _create_stub_groupsheet(self, args):
-        ## This produces an experimental groups xlsx with SampleNames
-        ## It requires us to figure out the sample names, which means I'm
-        ## duplicating abit of code from SampleSheet
+        """
+        Create experimental groups Excel and CSV files with SampleNames.
+        """
+        # Get sample names
         samples = self._get_sample_names(args['fq_folder'])
         samples.sort()
-        
-        # populate the group sheet with the sample names
-        groups = pd.DataFrame({'SampleName': samples,
-                    'Group': 'NULL'})
-        contrasts = pd.DataFrame({'Comparison_Name' : [],
-                      'Reference_Group' : [],
-                      'Test_Group' : []})
-        # make sure the directory exists and make the expt group path
-        expr_group_path = f'{args["outdir"]}/experimental_groups.xlsx'
-        # if the outdir hasn't been made, make it
+    
+        # Populate the group sheet with sample names
+        groups = pd.DataFrame({'SampleName': samples, 'Group': 'NULL'})
+        contrasts = pd.DataFrame({'Comparison_Name': [], 'Reference_Group': [], 'Test_Group': []})
+    
+        # Ensure the output directory exists
         if not os.path.isdir(args['outdir']):
             os.makedirs(args['outdir'])
-        # save the group and contrast sheets
-        with pd.ExcelWriter(expr_group_path) as writer:  
-            groups.to_excel(writer, sheet_name='groups', index = False)
-            contrasts.to_excel(writer, sheet_name='contrasts', index = False)
-        # return the new path to add back to args
-        return os.path.realpath(expr_group_path)
+    
+        # Paths for Excel and CSV
+        expr_group_xlsx = os.path.join(args['outdir'], 'experimental_groups.xlsx')
+        expr_group_csv = os.path.join(args['outdir'], 'experimental_groups.csv')
+    
+        # Save Excel
+        with pd.ExcelWriter(expr_group_xlsx) as writer:
+            groups.to_excel(writer, sheet_name='groups', index=False)
+            contrasts.to_excel(writer, sheet_name='contrasts', index=False)
+    
+        # Save CSV (only the groups sheet)
+        groups.to_csv(expr_group_csv, index=False)
+    
+        # Return the Excel path (or could return both paths if needed)
+        return os.path.realpath(expr_group_xlsx)
 
     def _get_sample_names(self, fq_dir):
         # Four different regexs to determine if its a fastq then grab the
@@ -490,7 +502,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
         handle.write('    exit 99\n')
         handle.write('fi\n')
         # Make two versions of the summary command: one with the single sample
-        # array dependency and one without
+        # array dependency and one without for summary only jobs.
         summary_cmd_dep = [
             'sbatch',
             '--parsable',
@@ -506,7 +518,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
             '--tmp=' + str(self.tmp_space) + 'mb',
             '-n', '1',
             '-c', str(self.ppn),
-            '--time=' + str(self.walltime * 60),
+            '--time=60',
             '--depend=afterok:${single_id}',
             '--export=' + summary_vars,
             self.summary_script,
@@ -528,7 +540,7 @@ class BulkRNAseqPipeline(Pipeline.Pipeline):
             '--tmp=' + str(self.tmp_space) + 'mb',
             '-n', '1',
             '-c', str(self.ppn),
-            '--time=' + str(self.walltime * 60),
+            '--time=60',
             '--export=' + summary_vars,
             self.summary_script,
             '||',
