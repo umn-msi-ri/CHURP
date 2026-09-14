@@ -348,6 +348,8 @@ for (i in 1:dim(comparison_sheet)[1]){
     qlf <- glmQLFTest(fit, contrast  = comp_var)
     tags <- topTags(qlf, n = nrow(qlf$genes))
     comp <- gsub("group","",comp)
+    # deal with any X preceding numbers in group names here...
+    comp <- gsub("X(?=[0-9])","",comp,perl=TRUE)
     de_file <- paste(out_dir, "/DEGs/DE_", comp, "_list.txt", sep = "")
     write.table(tags$table, file = de_file, sep = '\t', quote = FALSE, row.names = FALSE)
   }else{

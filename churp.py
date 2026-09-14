@@ -52,7 +52,7 @@ CHURP pipelines. These names are *case sensitive.* To read more about MSI's
 collection of genomics reference data, including the update schedule, please
 see the following page:
 
-https://msi.umn.edu/our-resources/knowledge-base/bioinformatics-guides/bioref\n\n"""
+https://msi.umn.edu/consulting-and-research/bioinformatics-guides/bioref\n\n"""
     sys.stderr.write(msg)
     # Print a header for the table
     hdr = [

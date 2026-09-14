@@ -7,11 +7,11 @@ import CHURPipelines
 # The latest Ensembl releases pulled into bioref. Update this when bioref
 # updates!
 ENSEMBL_RELEASES = {
-    'main': '113',
-    'plants': '60',
-    'fungi': '60',
-    'metazoa': '60',
-    'protists': '60'}
+    'main': '115',
+    'plants': '62',
+    'fungi': '62',
+    'metazoa': '62',
+    'protists': '62'}
 
 # This is potentially a bit silly, but it hopefully makes maintaining this
 # easier. Store the ensembl division, species name (as encoded in the directory
@@ -21,12 +21,12 @@ ENSEMBL_RELEASES = {
 FAVE_ASM = {
     'human': ('main', 'Homo_sapiens', 'GRCh38.p14'),
     'mouse': ('main', 'Mus_musculus', 'GRCm39'),
-    'rat': ('main', 'Rattus_norvegicus', 'mRatBN7.2'),
+    'rat': ('main', 'Rattus_norvegicus', 'GRCr8'),
     'zebrafish': ('main', 'Danio_rerio', 'GRCz11'),
-    'fly': ('main', 'Drosophila_melanogaster', 'BDGP6.46'),
+    'fly': ('main', 'Drosophila_melanogaster', 'BDGP6.54'),
     'worm': ('main', 'Caenorhabditis_elegans', 'WBcel235'),
     'yeast': ('main', 'Saccharomyces_cerevisiae', 'R64-1-1'),
-    'cow': ('main', 'Bos_taurus', 'ARS-UCD1.3'),
+    'cow': ('main', 'Bos_taurus', 'ARS-UCD2.0'),
     'dog': ('main', 'Canis_lupus_familiaris', 'ROS_Cfam_1.0'),
     'pig': ('main', 'Sus_scrofa', 'Sscrofa11.1'),
     'chicken': ('main', 'Gallus_gallus', 'bGalGal1.mat.broiler.GRCg7b'),

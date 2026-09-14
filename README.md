@@ -23,7 +23,7 @@ The following pipelines have been implemented:
 - Bulk RNAseq
 
 ## Current Version
-The current version is `1.1.0`, released on 2025-07-10.
+The current version is `1.2.0`, released on 2026-09-14.
 
 ## Development Versions
 To gain access to a development version, with experimental new features and bug fixes, see the other branches in this repository. Be warned that development versions are highly unstable and not tested for accuracy; you should only use a development version if you are familiar with Python package development and RNAseq analysis "by hand." **We do not support issues arising from a development version of CHURP.**
